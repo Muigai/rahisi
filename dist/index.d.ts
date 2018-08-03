@@ -59,8 +59,8 @@ export declare class ConditionalRenderElement implements Renderable {
     private readonly source;
     private currentNode;
     constructor(source: F0<F0<Renderable>>);
-    mount(parent: View): HTMLElement | SVGElement | Text;
-    render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | SVGElement | Text;
+    mount(parent: View): HTMLElement | Text | SVGElement;
+    render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | Text | SVGElement;
     private currentSource;
 }
 export declare class TemplateElement<T> implements Renderable {
