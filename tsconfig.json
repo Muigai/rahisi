@@ -5,7 +5,7 @@
         /* Basic Options */
         "module": "commonjs",
         "target": "es2015",
-        "outDir": "./dist",
+        "outDir": ".",
         "removeComments": true,
         /* Type-Checking Options */
         "strict": true,
