@@ -20,6 +20,6 @@
         "allowSyntheticDefaultImports": true
     },
     "files": [
-        "src/control-extensions.tsx"
+        "src/forTyping.ts"
     ]
 }

@@ -4,7 +4,7 @@ import webpack from "webpack";
 const config: webpack.Configuration = {
   mode: "production",
   devtool: "source-map",
-  entry: "./src/control-extensions.tsx",
+  entry: "./src/forTyping.ts",
   module: {
     rules: [
       {

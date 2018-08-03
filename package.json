@@ -3,7 +3,7 @@
   "version": "1.1.2",
   "description": "UI library for prototyping ideas for reactive programming.",
   "main": "dist/bundle.js",
-  "typings": "dist/control-extensions.d.ts",
+  "typings": "dist/forTyping.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
