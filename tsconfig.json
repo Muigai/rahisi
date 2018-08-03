@@ -14,10 +14,7 @@
         "noUnusedParameters": true,
         /* Source Map Options */
         "sourceMap": true,
-        "declaration": true,
-        /* webpack */
-        "esModuleInterop": true,
-        "allowSyntheticDefaultImports": true
+        "declaration": true
     },
     "files": [
         "src/forTyping.ts"
