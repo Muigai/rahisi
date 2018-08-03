@@ -1,2 +1,636 @@
-!function(e){var t={};function n(r){if(t[r])return t[r].exports;var s=t[r]={i:r,l:!1,exports:{}};return e[r].call(s.exports,s,s.exports,n),s.l=!0,s.exports}n.m=e,n.c=t,n.d=function(e,t,r){n.o(e,t)||Object.defineProperty(e,t,{enumerable:!0,get:r})},n.r=function(e){"undefined"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:"Module"}),Object.defineProperty(e,"__esModule",{value:!0})},n.t=function(e,t){if(1&t&&(e=n(e)),8&t)return e;if(4&t&&"object"==typeof e&&e&&e.__esModule)return e;var r=Object.create(null);if(n.r(r),Object.defineProperty(r,"default",{enumerable:!0,value:e}),2&t&&"string"!=typeof e)for(var s in e)n.d(r,s,function(t){return e[t]}.bind(null,s));return r},n.n=function(e){var t=e&&e.__esModule?function(){return e.default}:function(){return e};return n.d(t,"a",t),t},n.o=function(e,t){return Object.prototype.hasOwnProperty.call(e,t)},n.p="",n(n.s=2)}([function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0}),t.ENTER_KEY=13,t.ESCAPE_KEY=27,t.notNullOrWhiteSpace=(e=>!!e&&e.trim().length>0),t.createRef=(()=>{let e=0;return()=>`id_${e++}`})(),t.mounted="mounted",t.unmounted="unmounted";const r=new MutationObserver(e=>{e.forEach(e=>{"childList"===e.type&&(e.addedNodes.forEach(e=>e.dispatchEvent(new Event(t.mounted))),e.removedNodes.forEach(e=>e.dispatchEvent(new Event(t.unmounted))))})});document.addEventListener("DOMContentLoaded",()=>r.observe(document.body,{attributes:!1,characterData:!1,childList:!0,subtree:!0}),!1);class s{constructor(){this.nextId=0,this.subscribers=new Map}start(){const e=()=>{this.subscribers.forEach(e=>e()),window.requestAnimationFrame(e)};window.requestAnimationFrame(e)}subscribe(e,n){const r=this.nextId;this.nextId++,this.subscribers.set(r,e),n.addEventListener(t.unmounted,()=>this.subscribers.delete(r))}}class i{constructor(e=new Array){this.items=e,this.nextKey=0,this.addListener=(()=>{}),this.removeListener=(()=>{})}getItems(){return this.items.map(e=>e.value)}getItem(e){return this.items[e].value}count(){return this.items.length}add(e){const t={key:this.nextKey,value:e};this.items.push(t),this.nextKey++,this.addListener([t])}delete(e){const t=this.items[e];this.items.splice(e,1),this.nextKey++,this.removeListener([t])}remove(e){this.delete(this.indexOf(e))}clear(){const e=this.items.splice(0);this.items.length=0,this.nextKey++,this.removeListener(e)}indexOf(e,t=0){t<0&&(t=Math.max(0,this.items.length+t));for(let n=t,r=this.items.length;n<r;n++)if(this.items[n].value===e)return n;return-1}forEach(e){this.getItems().forEach(e)}filter(e){return this.getItems().filter(e)}setListeners(e,t){this.addListener=e,this.removeListener=t,this.addListener(this.items)}}t.VersionedList=i;t.BaseElement=class{constructor(e,t=new Array,n=new Array){this.elementName=e,this.attributes=t,this.children=n}mount(e){const t=new s,n=this.render(e,t,!1);return t.start(),n}render(e,t,n){const r=n||"svg"===this.elementName;if(null==this.elementName){const n=document.createDocumentFragment();return this.children.forEach(e=>e.render(n,t,r)),e.appendChild(n),e}const s=r?document.createElementNS("http://www.w3.org/2000/svg",this.elementName):document.createElement(this.elementName);return this.attributes.forEach(e=>e.set(s,t,r)),this.children.forEach(e=>e.render(s,t,r)),e.appendChild(s),s}};t.ConditionalRenderElement=class{constructor(e){this.source=e,this.currentNode=document.createTextNode(""),this.currentSource=(()=>{throw new Error("undefined")})}mount(e){const t=new s,n=this.render(e,t,!1);return t.start(),n}render(e,t,n){this.currentSource=this.source(),this.currentNode=this.currentSource().render(e,t,n);const r=this.source;return t.subscribe(()=>{const s=r();if(this.currentSource!==s){this.currentSource=s;const r=this.currentSource().render(document.createDocumentFragment(),t,n);e.replaceChild(r,this.currentNode)}},e),e.appendChild(this.currentNode),this.currentNode}};class o{constructor(e,t,n){this.source=e,this.template=t,this.placeholder=n,this.nodes=new Map,this.currentValue=new i}mount(e){const t=new s,n=this.render(e,t,!1);return t.start(),n}render(e,t,n){const r=this.placeholder?this.placeholder.render(document.createDocumentFragment(),t,n):null,s=()=>{if(r)if(0===this.nodes.size){r.parentElement===e||e.appendChild(r)}else{r.parentElement===e&&e.removeChild(r)}},o=()=>{this.nodes.forEach((t,n)=>e.removeChild(t)),this.nodes.clear(),this.currentValue.setListeners(r=>{const i=document.createDocumentFragment();r.forEach(e=>{const r=this.template(e.value).render(i,t,n);this.nodes.set(e.key,r)}),e.appendChild(i),s()},t=>{t.forEach(t=>{e.removeChild(this.nodes.get(t.key)),this.nodes.delete(t.key)}),s()}),s()};if(this.source instanceof i)this.currentValue=this.source,o();else{this.currentValue=this.source(),o();const n=this.source;t.subscribe(()=>{const e=n();this.currentValue!==e&&(this.currentValue=e,o())},e)}return e}}t.TemplateElement=o;t.TextElement=class{constructor(e){this.textContent=e,this.currentValue=""}mount(e){const t=new s,n=this.render(e,t,!1);return t.start(),n}render(e,t,n){const r=document.createTextNode("");if("function"!=typeof this.textContent)this.currentValue=this.textContent,r.textContent=this.currentValue;else{this.currentValue=this.textContent(),r.textContent=this.currentValue;const e=this.textContent;t.subscribe(()=>{const t=e();this.currentValue!==t&&(this.currentValue=t,r.textContent=this.currentValue)},r)}return e.appendChild(r),r}};class u{constructor(e,t){this.attribute=e,this.value=t,this.currentValue=""}set(e,t,n){if("function"!=typeof this.value)this.currentValue=this.value,u.setAttribute(this.attribute,e,this.currentValue,n);else{this.currentValue=this.value(),u.setAttribute(this.attribute,e,this.currentValue,n);const r=this.value;t.subscribe(()=>{const t=r();this.currentValue!==t&&(this.currentValue=t,u.setAttribute(this.attribute,e,this.currentValue,n))},e)}}}u.setAttribute=((e,t,n,r)=>{if("style"===e)for(const r of Object.keys(n)){const s=null==n||null==n[r]?"":n[r];"-"===r[0]?t[e].setProperty(r,s):t[e][r]=s}else e in t&&"list"!==e&&"type"!==e&&"draggable"!==e&&"spellcheck"!==e&&"translate"!==e&&!r?t[e]=null==n?"":n:null!=n&&!1!==n&&t.setAttribute(e,n);null!=n&&!1!==n||t.removeAttribute(e)}),t.NativeAttribute=u;t.FocusA=class{constructor(e){this.focus=e,this.currentValue=!1}set(e,t){if("function"!=typeof this.focus)this.currentValue=this.focus,this.currentValue&&e.focus();else{this.currentValue=this.focus(),this.currentValue&&e.focus();const n=this.focus;t.subscribe(()=>{const t=n();this.currentValue!==t&&(this.currentValue=t),this.currentValue&&document.activeElement!==e&&e.focus()},e)}}};t.OnHandlerA=class{constructor(e,t){this.eventName=e,this.handler=t}set(e,t){e.addEventListener(this.eventName,this.handler)}},t.Template=(e=>{const{source:t,template:n,placeholder:r}=e;return new o(t,n,r||null)})},function(e,t,n){"use strict";Object.defineProperty(t,"__esModule",{value:!0});const r=n(0);class s{}s.createElement=((e,t,...n)=>{if("function"==typeof e)return e(t,n);const i=s.getAttributes(t),o=s.getChildren(n);return new r.BaseElement(e,i,o)}),s.getAttributes=(e=>{const t=new Array;if(e)for(const n of Object.keys(e)){const s=n.toLowerCase().replace("doubleclick","dblclick"),i=e[n];if(s.startsWith("on")){const e=s.substring(2);t.push(new r.OnHandlerA(e,i))}else switch(s){case"classname":t.push(new r.NativeAttribute("class",i));break;case"htmlfor":t.push(new r.NativeAttribute("for",i));break;case"focus":t.push(new r.FocusA(i));break;default:t.push(new r.NativeAttribute(s,i))}}return t}),s.getChildren=(e=>{const t=new Array;for(const n of e)s.appendChild(t,n);return t}),s.appendChild=((e,t)=>{if(void 0!==t&&"boolean"!=typeof t&&null!==t)if(Array.isArray(t))for(const n of t)s.appendChild(e,n);else if("string"==typeof t||"number"==typeof t)e.push(new r.TextElement(t.toString()));else if(t instanceof r.BaseElement||t instanceof r.TextElement||t instanceof r.ConditionalRenderElement||t instanceof r.TemplateElement)e.push(t);else if("function"==typeof t){"function"==typeof t()?e.push(new r.ConditionalRenderElement(t)):e.push(new r.TextElement(t))}else e.push(new r.TextElement(String(t)))}),t.React=s},function(e,t,n){"use strict";function r(e){for(var n in e)t.hasOwnProperty(n)||(t[n]=e[n])}Object.defineProperty(t,"__esModule",{value:!0}),r(n(3)),r(n(0)),r(n(1))},function(e,t,n){"use strict";var r=this&&this.__rest||function(e,t){var n={};for(var r in e)Object.prototype.hasOwnProperty.call(e,r)&&t.indexOf(r)<0&&(n[r]=e[r]);if(null!=e&&"function"==typeof Object.getOwnPropertySymbols){var s=0;for(r=Object.getOwnPropertySymbols(e);s<r.length;s++)t.indexOf(r[s])<0&&(n[r[s]]=e[r[s]])}return n};Object.defineProperty(t,"__esModule",{value:!0});const s=n(1),i=n(0);t.CheckBox=(e=>{const{onCheckChanged:t}=e,n=r(e,["onCheckChanged"]),o=s.React.getAttributes(n);return t&&o.push(new i.OnHandlerA("click",e=>t(e.currentTarget.checked))),o.push(new i.NativeAttribute("type","checkbox")),new i.BaseElement("input",o)}),t.TextBox=(e=>s.React.createElement("input",Object.assign({},e,{type:"text"}))),t.textVal=(e=>e.currentTarget.value),t.doScroll=((e,t,n,r)=>{const s=t.scrollTop,i=(n||e.offsetTop-10)-s;let o=0;const u=()=>{o+=20;const e=r||300,n=((e,t,n,r)=>(e/=r/2)<1?n/2*e*e+t:-n/2*(--e*(e-2)-1)+t)(o,s,i,e);t.scrollTop=n,o<e&&setTimeout(u,20)};u()})}]);
+/******/ (function(modules) { // webpackBootstrap
+/******/ 	// The module cache
+/******/ 	var installedModules = {};
+/******/
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/
+/******/ 		// Check if module is in cache
+/******/ 		if(installedModules[moduleId]) {
+/******/ 			return installedModules[moduleId].exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = installedModules[moduleId] = {
+/******/ 			i: moduleId,
+/******/ 			l: false,
+/******/ 			exports: {}
+/******/ 		};
+/******/
+/******/ 		// Execute the module function
+/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+/******/
+/******/ 		// Flag the module as loaded
+/******/ 		module.l = true;
+/******/
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/
+/******/
+/******/ 	// expose the modules object (__webpack_modules__)
+/******/ 	__webpack_require__.m = modules;
+/******/
+/******/ 	// expose the module cache
+/******/ 	__webpack_require__.c = installedModules;
+/******/
+/******/ 	// define getter function for harmony exports
+/******/ 	__webpack_require__.d = function(exports, name, getter) {
+/******/ 		if(!__webpack_require__.o(exports, name)) {
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
+/******/ 		}
+/******/ 	};
+/******/
+/******/ 	// define __esModule on exports
+/******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
+/******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
+/******/ 	};
+/******/
+/******/ 	// getDefaultExport function for compatibility with non-harmony modules
+/******/ 	__webpack_require__.n = function(module) {
+/******/ 		var getter = module && module.__esModule ?
+/******/ 			function getDefault() { return module['default']; } :
+/******/ 			function getModuleExports() { return module; };
+/******/ 		__webpack_require__.d(getter, 'a', getter);
+/******/ 		return getter;
+/******/ 	};
+/******/
+/******/ 	// Object.prototype.hasOwnProperty.call
+/******/ 	__webpack_require__.o = function(object, property) { return Object.prototype.hasOwnProperty.call(object, property); };
+/******/
+/******/ 	// __webpack_public_path__
+/******/ 	__webpack_require__.p = "";
+/******/
+/******/
+/******/ 	// Load entry module and return exports
+/******/ 	return __webpack_require__(__webpack_require__.s = "./src/forTyping.ts");
+/******/ })
+/************************************************************************/
+/******/ ({
+
+/***/ "./src/control-extensions.tsx":
+/*!************************************!*\
+  !*** ./src/control-extensions.tsx ***!
+  \************************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+var __rest = (this && this.__rest) || function (s, e) {
+    var t = {};
+    for (var p in s) if (Object.prototype.hasOwnProperty.call(s, p) && e.indexOf(p) < 0)
+        t[p] = s[p];
+    if (s != null && typeof Object.getOwnPropertySymbols === "function")
+        for (var i = 0, p = Object.getOwnPropertySymbols(s); i < p.length; i++) if (e.indexOf(p[i]) < 0)
+            t[p[i]] = s[p[i]];
+    return t;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+const factory_1 = __webpack_require__(/*! ./factory */ "./src/factory.ts");
+const index_1 = __webpack_require__(/*! ./index */ "./src/index.ts");
+exports.CheckBox = (props) => {
+    const { onCheckChanged } = props, rest = __rest(props, ["onCheckChanged"]);
+    const attributes = factory_1.React.getAttributes(rest);
+    if (onCheckChanged) {
+        attributes.push(new index_1.OnHandlerA("click", (e) => onCheckChanged(e.currentTarget.checked)));
+    }
+    attributes.push(new index_1.NativeAttribute("type", "checkbox"));
+    return new index_1.BaseElement("input", attributes);
+};
+exports.TextBox = (props) => factory_1.React.createElement("input", Object.assign({}, props, { type: "text" }));
+exports.textVal = (e) => e.currentTarget.value;
+exports.doScroll = (o, element, to, duration) => {
+    const start = element.scrollTop;
+    const change = (to || o.offsetTop - 10) - start;
+    const increment = 20;
+    let currentTime = 0;
+    const easeInOutQuad = (t, b, c, d) => {
+        t /= d / 2;
+        if (t < 1) {
+            return c / 2 * t * t + b;
+        }
+        t--;
+        return -c / 2 * (t * (t - 2) - 1) + b;
+    };
+    const animateScroll = () => {
+        currentTime += increment;
+        const d = duration || 300;
+        const val = easeInOutQuad(currentTime, start, change, d);
+        element.scrollTop = val;
+        if (currentTime < d) {
+            setTimeout(animateScroll, increment);
+        }
+    };
+    animateScroll();
+};
+
+
+/***/ }),
+
+/***/ "./src/factory.ts":
+/*!************************!*\
+  !*** ./src/factory.ts ***!
+  \************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+const index_1 = __webpack_require__(/*! ./index */ "./src/index.ts");
+class React {
+}
+React.createElement = (tagName, attributes, ...children) => {
+    if (typeof tagName === "function") {
+        return tagName(attributes, children);
+    }
+    const attribs = React.getAttributes(attributes);
+    const kids = React.getChildren(children);
+    return new index_1.BaseElement(tagName, attribs, kids);
+};
+React.getAttributes = (attributes) => {
+    const attribs = new Array();
+    if (attributes) {
+        for (const k of Object.keys(attributes)) {
+            const key = k.toLowerCase().replace("doubleclick", "dblclick");
+            const attributeValue = attributes[k];
+            if (key.startsWith("on")) {
+                const event = key.substring(2);
+                attribs.push(new index_1.OnHandlerA(event, attributeValue));
+                continue;
+            }
+            switch (key) {
+                case "classname":
+                    attribs.push(new index_1.NativeAttribute("class", attributeValue));
+                    break;
+                case "htmlfor":
+                    attribs.push(new index_1.NativeAttribute("for", attributeValue));
+                    break;
+                case "focus":
+                    attribs.push(new index_1.FocusA(attributeValue));
+                    break;
+                default:
+                    attribs.push(new index_1.NativeAttribute(key, attributeValue));
+                    break;
+            }
+        }
+    }
+    return attribs;
+};
+React.getChildren = (children) => {
+    const kids = new Array();
+    for (const child of children) {
+        React.appendChild(kids, child);
+    }
+    return kids;
+};
+React.appendChild = (kids, child) => {
+    if (typeof child === "undefined" || typeof child === "boolean" || child === null) {
+        return;
+    }
+    if (Array.isArray(child)) {
+        for (const value of child) {
+            React.appendChild(kids, value);
+        }
+    }
+    else if (typeof child === "string" || typeof child === "number") {
+        kids.push(new index_1.TextElement(child.toString()));
+    }
+    else if (child instanceof index_1.BaseElement
+        || child instanceof index_1.TextElement
+        || child instanceof index_1.ConditionalRenderElement
+        || child instanceof index_1.TemplateElement) {
+        kids.push(child);
+    }
+    else if (typeof child === "function") {
+        const test = child();
+        if (typeof test === "function") {
+            kids.push(new index_1.ConditionalRenderElement(child));
+        }
+        else {
+            kids.push(new index_1.TextElement(child));
+        }
+    }
+    else {
+        kids.push(new index_1.TextElement(String(child)));
+    }
+};
+exports.React = React;
+
+
+/***/ }),
+
+/***/ "./src/forTyping.ts":
+/*!**************************!*\
+  !*** ./src/forTyping.ts ***!
+  \**************************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+function __export(m) {
+    for (var p in m) if (!exports.hasOwnProperty(p)) exports[p] = m[p];
+}
+Object.defineProperty(exports, "__esModule", { value: true });
+__export(__webpack_require__(/*! ./control-extensions */ "./src/control-extensions.tsx"));
+__export(__webpack_require__(/*! ./index */ "./src/index.ts"));
+__export(__webpack_require__(/*! ./factory */ "./src/factory.ts"));
+
+
+/***/ }),
+
+/***/ "./src/index.ts":
+/*!**********************!*\
+  !*** ./src/index.ts ***!
+  \**********************/
+/*! no static exports found */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ENTER_KEY = 13;
+exports.ESCAPE_KEY = 27;
+exports.notNullOrWhiteSpace = (s) => !!s && s.trim().length > 0;
+exports.createRef = (() => {
+    let id = 0;
+    return () => `id_${id++}`;
+})();
+exports.mounted = "mounted";
+exports.unmounted = "unmounted";
+const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.type === "childList") {
+            mutation.addedNodes.forEach((n) => n.dispatchEvent(new Event(exports.mounted)));
+            mutation.removedNodes.forEach((n) => n.dispatchEvent(new Event(exports.unmounted)));
+        }
+    });
+});
+document.addEventListener("DOMContentLoaded", () => observer.observe(document.body, {
+    attributes: false,
+    characterData: false,
+    childList: true,
+    subtree: true,
+}), false);
+class Notifier {
+    constructor() {
+        this.nextId = 0;
+        this.subscribers = new Map();
+    }
+    start() {
+        const notify = () => {
+            this.subscribers.forEach((v) => v());
+            window.requestAnimationFrame(notify);
+        };
+        window.requestAnimationFrame(notify);
+    }
+    subscribe(onNext, dependency) {
+        const currentId = this.nextId;
+        this.nextId++;
+        this.subscribers.set(currentId, onNext);
+        dependency.addEventListener(exports.unmounted, () => this.subscribers.delete(currentId));
+    }
+}
+class VersionedList {
+    constructor(items = new Array()) {
+        this.items = items;
+        this.nextKey = 0;
+        this.addListener = () => { };
+        this.removeListener = () => { };
+    }
+    getItems() {
+        return this.items.map((a) => a.value);
+    }
+    getItem(index) {
+        return this.items[index].value;
+    }
+    count() { return this.items.length; }
+    add(item) {
+        const val = { key: this.nextKey, value: item };
+        this.items.push(val);
+        this.nextKey++;
+        this.addListener([val]);
+    }
+    delete(itemIndex) {
+        const val = this.items[itemIndex];
+        this.items.splice(itemIndex, 1);
+        this.nextKey++;
+        this.removeListener([val]);
+    }
+    remove(item) {
+        this.delete(this.indexOf(item));
+    }
+    clear() {
+        const cleared = this.items.splice(0);
+        this.items.length = 0;
+        this.nextKey++;
+        this.removeListener(cleared);
+    }
+    indexOf(obj, fromIndex = 0) {
+        if (fromIndex < 0) {
+            fromIndex = Math.max(0, this.items.length + fromIndex);
+        }
+        for (let i = fromIndex, j = this.items.length; i < j; i++) {
+            if (this.items[i].value === obj) {
+                return i;
+            }
+        }
+        return -1;
+    }
+    forEach(action) {
+        this.getItems().forEach(action);
+    }
+    filter(filter) {
+        return this.getItems().filter(filter);
+    }
+    setListeners(addListener, removeListener) {
+        this.addListener = addListener;
+        this.removeListener = removeListener;
+        this.addListener(this.items);
+    }
+}
+exports.VersionedList = VersionedList;
+class BaseElement {
+    constructor(elementName, attributes = new Array(), children = new Array()) {
+        this.elementName = elementName;
+        this.attributes = attributes;
+        this.children = children;
+    }
+    mount(parent) {
+        const notifier = new Notifier();
+        const v = this.render(parent, notifier, false);
+        notifier.start();
+        return v;
+    }
+    render(parent, watch, isSvg) {
+        const useSvg = isSvg || this.elementName === "svg";
+        if (this.elementName == null) {
+            const view = document.createDocumentFragment();
+            this.children.forEach((a) => a.render(view, watch, useSvg));
+            parent.appendChild(view);
+            return parent;
+        }
+        const view = useSvg ? document.createElementNS("http://www.w3.org/2000/svg", this.elementName) :
+            document.createElement(this.elementName);
+        this.attributes.forEach((a) => a.set(view, watch, useSvg));
+        this.children.forEach((a) => a.render(view, watch, useSvg));
+        parent.appendChild(view);
+        return view;
+    }
+}
+exports.BaseElement = BaseElement;
+class ConditionalRenderElement {
+    constructor(source) {
+        this.source = source;
+        this.currentNode = document.createTextNode("");
+        this.currentSource = () => { throw new Error("undefined"); };
+    }
+    mount(parent) {
+        const notifier = new Notifier();
+        const v = this.render(parent, notifier, false);
+        notifier.start();
+        return v;
+    }
+    render(parent, watch, isSvg) {
+        this.currentSource = this.source();
+        this.currentNode = this.currentSource().render(parent, watch, isSvg);
+        const gen = this.source;
+        watch.subscribe(() => {
+            const s = gen();
+            if (this.currentSource !== s) {
+                this.currentSource = s;
+                const replacement = this.currentSource().render(document.createDocumentFragment(), watch, isSvg);
+                parent.replaceChild(replacement, this.currentNode);
+            }
+        }, parent);
+        parent.appendChild(this.currentNode);
+        return this.currentNode;
+    }
+}
+exports.ConditionalRenderElement = ConditionalRenderElement;
+class TemplateElement {
+    constructor(source, template, placeholder) {
+        this.source = source;
+        this.template = template;
+        this.placeholder = placeholder;
+        this.nodes = new Map();
+        this.currentValue = new VersionedList();
+    }
+    mount(parent) {
+        const notifier = new Notifier();
+        const v = this.render(parent, notifier, false);
+        notifier.start();
+        return v;
+    }
+    render(o, watch, isSvg) {
+        const placeholderNode = this.placeholder ? this.placeholder.render(document.createDocumentFragment(), watch, isSvg) : null;
+        const showPlaceHolder = () => {
+            if (!placeholderNode) {
+                return;
+            }
+            if (this.nodes.size === 0) {
+                const _ = placeholderNode.parentElement === o || o.appendChild(placeholderNode);
+            }
+            else {
+                const _ = placeholderNode.parentElement === o && o.removeChild(placeholderNode);
+            }
+        };
+        const subscribe = () => {
+            this.nodes.forEach((child, _) => o.removeChild(child));
+            this.nodes.clear();
+            this.currentValue.setListeners((items) => {
+                const fragment = document.createDocumentFragment();
+                items.forEach((i) => {
+                    const child = this.template(i.value).render(fragment, watch, isSvg);
+                    this.nodes.set(i.key, child);
+                });
+                o.appendChild(fragment);
+                showPlaceHolder();
+            }, (items) => {
+                items.forEach((i) => {
+                    o.removeChild(this.nodes.get(i.key));
+                    this.nodes.delete(i.key);
+                });
+                showPlaceHolder();
+            });
+            showPlaceHolder();
+        };
+        if (this.source instanceof VersionedList) {
+            this.currentValue = this.source;
+            subscribe();
+        }
+        else {
+            this.currentValue = this.source();
+            subscribe();
+            const gen = this.source;
+            watch.subscribe(() => {
+                const s = gen();
+                if (this.currentValue !== s) {
+                    this.currentValue = s;
+                    subscribe();
+                }
+            }, o);
+        }
+        return o;
+    }
+}
+exports.TemplateElement = TemplateElement;
+class TextElement {
+    constructor(textContent) {
+        this.textContent = textContent;
+        this.currentValue = "";
+    }
+    mount(parent) {
+        const notifier = new Notifier();
+        const v = this.render(parent, notifier, false);
+        notifier.start();
+        return v;
+    }
+    render(parent, watch, _) {
+        const o = document.createTextNode("");
+        if (typeof this.textContent !== "function") {
+            this.currentValue = this.textContent;
+            o.textContent = this.currentValue;
+        }
+        else {
+            this.currentValue = this.textContent();
+            o.textContent = this.currentValue;
+            const gen = this.textContent;
+            watch.subscribe(() => {
+                const s = gen();
+                if (this.currentValue !== s) {
+                    this.currentValue = s;
+                    o.textContent = this.currentValue;
+                }
+            }, o);
+        }
+        parent.appendChild(o);
+        return o;
+    }
+}
+exports.TextElement = TextElement;
+class NativeAttribute {
+    constructor(attribute, value) {
+        this.attribute = attribute;
+        this.value = value;
+        this.currentValue = "";
+    }
+    set(o, watch, isSvg) {
+        if (typeof this.value !== "function") {
+            this.currentValue = this.value;
+            NativeAttribute.setAttribute(this.attribute, o, this.currentValue, isSvg);
+        }
+        else {
+            this.currentValue = this.value();
+            NativeAttribute.setAttribute(this.attribute, o, this.currentValue, isSvg);
+            const gen = this.value;
+            watch.subscribe(() => {
+                const s = gen();
+                if (this.currentValue !== s) {
+                    this.currentValue = s;
+                    NativeAttribute.setAttribute(this.attribute, o, this.currentValue, isSvg);
+                }
+            }, o);
+        }
+    }
+}
+NativeAttribute.setAttribute = (attribute, element, value, isSvg) => {
+    if (attribute === "style") {
+        for (const key of Object.keys(value)) {
+            const style = value == null || value[key] == null ? "" : value[key];
+            if (key[0] === "-") {
+                element[attribute].setProperty(key, style);
+            }
+            else {
+                element[attribute][key] = style;
+            }
+        }
+    }
+    else if (attribute in element &&
+        attribute !== "list" &&
+        attribute !== "type" &&
+        attribute !== "draggable" &&
+        attribute !== "spellcheck" &&
+        attribute !== "translate" &&
+        !isSvg) {
+        element[attribute] = value == null ? "" : value;
+    }
+    else if (value != null && value !== false) {
+        element.setAttribute(attribute, value);
+    }
+    if (value == null || value === false) {
+        element.removeAttribute(attribute);
+    }
+};
+exports.NativeAttribute = NativeAttribute;
+class FocusA {
+    constructor(focus) {
+        this.focus = focus;
+        this.currentValue = false;
+    }
+    set(o, watch) {
+        if (typeof this.focus !== "function") {
+            this.currentValue = this.focus;
+            if (this.currentValue) {
+                o.focus();
+            }
+        }
+        else {
+            this.currentValue = this.focus();
+            if (this.currentValue) {
+                o.focus();
+            }
+            const gen = this.focus;
+            watch.subscribe(() => {
+                const s = gen();
+                if (this.currentValue !== s) {
+                    this.currentValue = s;
+                }
+                if (this.currentValue && document.activeElement !== o) {
+                    o.focus();
+                }
+            }, o);
+        }
+    }
+}
+exports.FocusA = FocusA;
+class OnHandlerA {
+    constructor(eventName, handler) {
+        this.eventName = eventName;
+        this.handler = handler;
+    }
+    set(o, _) {
+        o.addEventListener(this.eventName, this.handler);
+    }
+}
+exports.OnHandlerA = OnHandlerA;
+exports.Template = (props) => {
+    const { source, template, placeholder } = props;
+    return new TemplateElement(source, template, placeholder || null);
+};
+
+
+/***/ })
+
+/******/ });
 //# sourceMappingURL=bundle.js.map
