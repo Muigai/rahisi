@@ -3,7 +3,7 @@
   "version": "1.1.1",
   "description": "UI library for prototyping ideas for reactive programming.",
   "main": "dist/bundle.js",
-  "typings": "control-extensions.d.ts",
+  "typings": "dist/control-extensions.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
@@ -16,6 +16,7 @@
   "author": "Muigai Mwaura",
   "license": "ISC",
   "devDependencies": {
+    "csstype": "^2.5.6",
     "@types/node": "^10.5.5",
     "@types/webpack": "^4.4.8",
     "ts-loader": "^4.4.2",
@@ -25,7 +26,7 @@
     "webpack-cli": "^3.1.0"
   },
   "dependencies": {
-    "csstype": "^2.5.6"
+    
   },
   "repository": {
     "type": "git",
