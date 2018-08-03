@@ -1,6 +1,6 @@
 {
   "name": "rahisi",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "UI library for prototyping ideas for reactive programming.",
   "main": "dist/bundle.js",
   "typings": "dist/control-extensions.d.ts",
@@ -25,9 +25,7 @@
     "webpack": "^4.16.3",
     "webpack-cli": "^3.1.0"
   },
-  "dependencies": {
-    
-  },
+  "dependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Muigai/rahisi.git"
