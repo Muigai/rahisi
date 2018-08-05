@@ -1,4 +1,5 @@
-import { Attribute, Either, F1, F2, Renderable } from "./index";
+import { Attribute, Renderable } from "./index";
+import { Either, F1, F2 } from "rahisi-type-utils";
 declare type K = keyof HTMLElementEventMap;
 interface AttributeValue {
     [name: string]: Either<string> | Either<boolean> | F1<HTMLElementEventMap[K], any>;

@@ -1,8 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.ENTER_KEY = 13;
-exports.ESCAPE_KEY = 27;
-exports.notNullOrWhiteSpace = (s) => !!s && s.trim().length > 0;
 exports.createRef = (() => {
     let id = 0;
     return () => `id_${id++}`;

@@ -1,4 +1,4 @@
-import { A1 } from "./index";
+import { A1 } from "rahisi-type-utils";
 import * as R from "./jsx";
 export declare const CheckBox: (props: {
     onCheckChanged?: A1<boolean> | undefined;
