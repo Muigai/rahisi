@@ -1,3 +1,4 @@
+// Type defs modified from React as below
 // Type definitions for React 16.4
 // Project: http://facebook.github.io/react/
 // Definitions by: Asana <https://asana.com>

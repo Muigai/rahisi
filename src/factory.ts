@@ -2,9 +2,6 @@ import {
     Attribute,
     BaseElement,
     ConditionalRenderElement,
-    Either,
-    F1,
-    F2,
     FocusA,
     NativeAttribute,
     OnHandlerA,
@@ -12,6 +9,12 @@ import {
     TemplateElement,
     TextElement,
 } from "./index";
+
+import {
+    Either,
+    F1,
+    F2,
+} from "rahisi-type-utils";
 
 type K = keyof HTMLElementEventMap;
 

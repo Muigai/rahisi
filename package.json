@@ -19,7 +19,9 @@
     "csstype": "^2.5.6",
     "typescript": "^3.0.1"
   },
-  "dependencies": {},
+  "dependencies": {
+    "rahisi-type-utils": "^1.0.1"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Muigai/rahisi.git"

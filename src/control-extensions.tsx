@@ -1,5 +1,6 @@
+import {A1} from "rahisi-type-utils";
 import { React } from "./factory";
-import { A1, BaseElement, NativeAttribute, OnHandlerA } from "./index";
+import { BaseElement, NativeAttribute, OnHandlerA } from "./index";
 import * as R from "./jsx";
 
 // add custom parameters checkChanged etc.
