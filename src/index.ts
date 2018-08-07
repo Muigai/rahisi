@@ -254,7 +254,7 @@ export class ConditionalRenderElement implements Renderable {
                     const replacement =
                         this.currentSource().render(document.createDocumentFragment(), watch, isSvg);
 
-                    parent.replaceChild(replacement, this.currentNode); // node
+                    parent.replaceChild(this.currentNode, replacement); // node
                 }
             },
             parent,
