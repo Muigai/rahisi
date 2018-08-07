@@ -1,5 +1,8 @@
 {
     "compilerOptions": {
+        
+        "composite": true,
+
         /* JSX Options */
         "jsx": "react",
         /* Basic Options */

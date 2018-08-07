@@ -16,10 +16,10 @@
   "author": "Muigai Mwaura",
   "license": "ISC",
   "devDependencies": {
-    "csstype": "^2.5.6",
     "typescript": "^3.0.1"
   },
   "dependencies": {
+    "csstype": "^2.5.6",
     "rahisi-type-utils": "^1.0.3"
   },
   "repository": {
