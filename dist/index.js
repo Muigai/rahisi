@@ -142,13 +142,18 @@ class ConditionalRenderElement {
         return v;
     }
     render(parent, watch, isSvg) {
-        this.currentNode = this.currentSource.renderable().render(parent, watch, isSvg);
+        this.currentNode =
+            this.currentSource
+                .renderable()
+                .render(parent, watch, isSvg);
         const gen = this.source;
         watch.subscribe(() => {
             const s = gen.find((a) => a.test());
             if (this.currentSource !== s) {
                 this.currentSource = s || this.fallback;
-                const replacement = this.currentSource.renderable().render(document.createDocumentFragment(), watch, isSvg);
+                const replacement = this.currentSource
+                    .renderable()
+                    .render(document.createDocumentFragment(), watch, isSvg);
                 parent.replaceChild(replacement, this.currentNode);
                 this.currentNode = replacement;
             }
