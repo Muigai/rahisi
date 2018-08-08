@@ -254,13 +254,13 @@ export class ConditionalRenderElement implements Renderable {
                     const replacement =
                         this.currentSource().render(document.createDocumentFragment(), watch, isSvg);
 
-                    parent.replaceChild(this.currentNode, replacement); // node
+                    parent.replaceChild(replacement, this.currentNode); // node
+
+                    this.currentNode = replacement;
                 }
             },
             parent,
         );
-
-        parent.appendChild(this.currentNode);
 
         return this.currentNode;
     }

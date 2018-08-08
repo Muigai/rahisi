@@ -148,10 +148,10 @@ class ConditionalRenderElement {
             if (this.currentSource !== s) {
                 this.currentSource = s;
                 const replacement = this.currentSource().render(document.createDocumentFragment(), watch, isSvg);
-                parent.replaceChild(replacement, this.currentNode);
-                this.currentNode = replacement;
+                parent.replaceChild(this.currentNode, replacement);
             }
         }, parent);
+        parent.appendChild(this.currentNode);
         return this.currentNode;
     }
 }
