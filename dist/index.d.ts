@@ -47,7 +47,7 @@ export declare class BaseElement implements Renderable {
 }
 export interface ConditionalElement {
     test: F0<boolean>;
-    renderable: Renderable;
+    renderable: () => Renderable;
 }
 export declare class ConditionalRenderElement implements Renderable {
     private readonly source;

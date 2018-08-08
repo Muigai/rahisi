@@ -132,7 +132,7 @@ class ConditionalRenderElement {
         this.source = source;
         this.def = def;
         this.currentNode = document.createTextNode("");
-        this.fallback = { test: () => true, renderable: def };
+        this.fallback = { test: () => true, renderable: () => def };
         this.currentSource = source.find((a) => a.test()) || this.fallback;
     }
     mount(parent) {
@@ -142,13 +142,13 @@ class ConditionalRenderElement {
         return v;
     }
     render(parent, watch, isSvg) {
-        this.currentNode = this.currentSource.renderable.render(parent, watch, isSvg);
+        this.currentNode = this.currentSource.renderable().render(parent, watch, isSvg);
         const gen = this.source;
         watch.subscribe(() => {
             const s = gen.find((a) => a.test());
             if (this.currentSource !== s) {
                 this.currentSource = s || this.fallback;
-                const replacement = this.currentSource.renderable.render(document.createDocumentFragment(), watch, isSvg);
+                const replacement = this.currentSource.renderable().render(document.createDocumentFragment(), watch, isSvg);
                 parent.replaceChild(replacement, this.currentNode);
                 this.currentNode = replacement;
             }

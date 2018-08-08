@@ -219,7 +219,7 @@ export class BaseElement implements Renderable {
 
 export interface ConditionalElement {
     test: F0<boolean>;
-    renderable: Renderable;
+    renderable: () => Renderable;
 }
 
 export class ConditionalRenderElement implements Renderable {
@@ -232,7 +232,7 @@ export class ConditionalRenderElement implements Renderable {
 
     constructor(private readonly source: ConditionalElement[], private readonly def: Renderable) {
 
-        this.fallback = {test: () => true, renderable: def};
+        this.fallback = {test: () => true, renderable: () => def};
 
         this.currentSource = source.find((a) => a.test()) || this.fallback;
     }
@@ -250,7 +250,7 @@ export class ConditionalRenderElement implements Renderable {
 
     public render(parent: View, watch: Notifier, isSvg: boolean) {
 
-        this.currentNode = this.currentSource.renderable.render(parent, watch, isSvg);
+        this.currentNode = this.currentSource.renderable().render(parent, watch, isSvg);
 
         const gen = this.source;
 
@@ -264,7 +264,7 @@ export class ConditionalRenderElement implements Renderable {
                     this.currentSource = s || this.fallback;
 
                     const replacement =
-                        this.currentSource.renderable.render(document.createDocumentFragment(), watch, isSvg);
+                        this.currentSource.renderable().render(document.createDocumentFragment(), watch, isSvg);
 
                     parent.replaceChild(replacement, this.currentNode); // node
 
