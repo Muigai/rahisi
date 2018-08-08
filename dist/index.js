@@ -128,10 +128,12 @@ class BaseElement {
 }
 exports.BaseElement = BaseElement;
 class ConditionalRenderElement {
-    constructor(source) {
+    constructor(source, def) {
         this.source = source;
+        this.def = def;
         this.currentNode = document.createTextNode("");
-        this.currentSource = () => { throw new Error("undefined"); };
+        this.fallback = { test: () => true, renderable: def };
+        this.currentSource = source.find((a) => a.test()) || this.fallback;
     }
     mount(parent) {
         const notifier = new Notifier();
@@ -140,14 +142,13 @@ class ConditionalRenderElement {
         return v;
     }
     render(parent, watch, isSvg) {
-        this.currentSource = this.source();
-        this.currentNode = this.currentSource().render(parent, watch, isSvg);
+        this.currentNode = this.currentSource.renderable.render(parent, watch, isSvg);
         const gen = this.source;
         watch.subscribe(() => {
-            const s = gen();
+            const s = gen.find((a) => a.test());
             if (this.currentSource !== s) {
-                this.currentSource = s;
-                const replacement = this.currentSource().render(document.createDocumentFragment(), watch, isSvg);
+                this.currentSource = s || this.fallback;
+                const replacement = this.currentSource.renderable.render(document.createDocumentFragment(), watch, isSvg);
                 parent.replaceChild(replacement, this.currentNode);
                 this.currentNode = replacement;
             }

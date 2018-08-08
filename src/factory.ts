@@ -107,15 +107,7 @@ export class React {
             || child instanceof TemplateElement) {
             kids.push(child);
         } else if (typeof child === "function") {
-
-            const test = child();
-
-            if (typeof test === "function") {
-                kids.push(new ConditionalRenderElement(child));
-            } else {
-                kids.push(new TextElement(child));
-            }
-
+            kids.push(new TextElement(child));
         } else {
             kids.push(new TextElement(String(child)));
         }

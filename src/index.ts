@@ -217,11 +217,25 @@ export class BaseElement implements Renderable {
     }
 }
 
+export interface ConditionalElement {
+    test: F0<boolean>;
+    renderable: Renderable;
+}
+
 export class ConditionalRenderElement implements Renderable {
+
+    private currentSource: ConditionalElement;
 
     private currentNode: HTMLElement | SVGElement | Text = document.createTextNode("");
 
-    constructor(private readonly source: F0<F0<Renderable>>) { }
+    private fallback: ConditionalElement;
+
+    constructor(private readonly source: ConditionalElement[], private readonly def: Renderable) {
+
+        this.fallback = {test: () => true, renderable: def};
+
+        this.currentSource = source.find((a) => a.test()) || this.fallback;
+    }
 
     public mount(parent: View) {
 
@@ -236,23 +250,21 @@ export class ConditionalRenderElement implements Renderable {
 
     public render(parent: View, watch: Notifier, isSvg: boolean) {
 
-        this.currentSource = this.source();
-
-        this.currentNode = this.currentSource().render(parent, watch, isSvg);
+        this.currentNode = this.currentSource.renderable.render(parent, watch, isSvg);
 
         const gen = this.source;
 
         watch.subscribe(
             () => {
 
-                const s = gen();
+                const s = gen.find((a) => a.test());
 
                 if (this.currentSource !== s) {
 
-                    this.currentSource = s;
+                    this.currentSource = s || this.fallback;
 
                     const replacement =
-                        this.currentSource().render(document.createDocumentFragment(), watch, isSvg);
+                        this.currentSource.renderable.render(document.createDocumentFragment(), watch, isSvg);
 
                     parent.replaceChild(replacement, this.currentNode); // node
 
@@ -264,8 +276,6 @@ export class ConditionalRenderElement implements Renderable {
 
         return this.currentNode;
     }
-
-    private currentSource: F0<Renderable> = () => { throw new Error("undefined"); };
 }
 
 export class TemplateElement<T> implements Renderable {

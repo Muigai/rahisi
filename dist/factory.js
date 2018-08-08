@@ -66,13 +66,7 @@ React.appendChild = (kids, child) => {
         kids.push(child);
     }
     else if (typeof child === "function") {
-        const test = child();
-        if (typeof test === "function") {
-            kids.push(new index_1.ConditionalRenderElement(child));
-        }
-        else {
-            kids.push(new index_1.TextElement(child));
-        }
+        kids.push(new index_1.TextElement(child));
     }
     else {
         kids.push(new index_1.TextElement(String(child)));

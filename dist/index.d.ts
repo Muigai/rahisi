@@ -45,13 +45,19 @@ export declare class BaseElement implements Renderable {
     mount(parent: View): HTMLElement | SVGElement;
     render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | SVGElement;
 }
+export interface ConditionalElement {
+    test: F0<boolean>;
+    renderable: Renderable;
+}
 export declare class ConditionalRenderElement implements Renderable {
     private readonly source;
-    private currentNode;
-    constructor(source: F0<F0<Renderable>>);
-    mount(parent: View): HTMLElement | Text | SVGElement;
-    render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | Text | SVGElement;
+    private readonly def;
     private currentSource;
+    private currentNode;
+    private fallback;
+    constructor(source: ConditionalElement[], def: Renderable);
+    mount(parent: View): HTMLElement | SVGElement | Text;
+    render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | SVGElement | Text;
 }
 export declare class TemplateElement<T> implements Renderable {
     private readonly source;
