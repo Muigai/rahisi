@@ -1,4 +1,4 @@
-import {A1} from "rahisi-type-utils";
+import { A1 } from "rahisi-type-utils";
 import { React } from "./factory";
 import { BaseElement, NativeAttribute, OnHandlerA } from "./index";
 import * as R from "./jsx";
@@ -16,10 +16,29 @@ export const CheckBox = (props: { onCheckChanged?: A1<boolean> } & R.InputHTMLAt
     return new BaseElement("input", attributes) as any;
 };
 
-export const TextBox = (props: R.InputHTMLAttributes<HTMLInputElement>) =>
-    <input {...props} type="text"/>;
+export const TextBox = (props: { onTextChanged?: A1<string> } & R.InputHTMLAttributes<HTMLInputElement>) => {
+    const { onTextChanged, ...rest } = props;
+    const attributes = React.getAttributes(rest as any);
+    if (onTextChanged) {
+        const handler =
+            (() => {
+                let val = "";
+                const onKeyUp = (e: R.KeyboardEvent<HTMLInputElement>) => {
+                    if (e.currentTarget.value === val) {
+                        return;
+                    }
+                    val = e.currentTarget.value;
+                    onTextChanged(val);
+                };
+                return onKeyUp;
+            })();
+        attributes.push(new OnHandlerA("keyup", handler as any));
+    }
+    attributes.push(new NativeAttribute("type", "text"));
+    return new BaseElement("input", attributes) as any;
+};
 
-export const textVal = (e: R.KeyboardEvent<HTMLInputElement>) => e.currentTarget.value;
+// export const textVal = (e: R.KeyboardEvent<HTMLInputElement>) => e.currentTarget.value;
 
 export const doScroll = (o: HTMLElement, element: HTMLElement, to?: number, duration?: number) => {
 

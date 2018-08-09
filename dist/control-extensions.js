@@ -21,8 +21,27 @@ exports.CheckBox = (props) => {
     attributes.push(new index_1.NativeAttribute("type", "checkbox"));
     return new index_1.BaseElement("input", attributes);
 };
-exports.TextBox = (props) => factory_1.React.createElement("input", Object.assign({}, props, { type: "text" }));
-exports.textVal = (e) => e.currentTarget.value;
+exports.TextBox = (props) => {
+    const { onTextChanged } = props, rest = __rest(props, ["onTextChanged"]);
+    const attributes = factory_1.React.getAttributes(rest);
+    if (onTextChanged) {
+        const handler = (() => {
+            let val = "";
+            const onKeyUp = (e) => {
+                if (e.currentTarget.value === val) {
+                    return;
+                }
+                val = e.currentTarget.value;
+                onTextChanged(val);
+            };
+            return onKeyUp;
+        })();
+        attributes.push(new index_1.OnHandlerA("keyup", handler));
+    }
+    attributes.push(new index_1.NativeAttribute("type", "text"));
+    return new index_1.BaseElement("input", attributes);
+};
+// export const textVal = (e: R.KeyboardEvent<HTMLInputElement>) => e.currentTarget.value;
 exports.doScroll = (o, element, to, duration) => {
     const start = element.scrollTop;
     const change = (to || o.offsetTop - 10) - start;
