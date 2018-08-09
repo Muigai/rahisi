@@ -1,6 +1,6 @@
 {
   "name": "rahisi",
-  "version": "1.1.20",
+  "version": "1.1.21",
   "description": "UI library for prototyping ideas for reactive programming.",
   "main": "dist/forTyping.js",
   "typings": "dist/forTyping.d.ts",
