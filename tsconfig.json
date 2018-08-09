@@ -7,7 +7,7 @@
         "module": "commonjs",
         "target": "es2015",
         "outDir": "./dist",
-        "removeComments": true,
+        "removeComments": false,
         /* Type-Checking Options */
         "strict": true,
         "noFallthroughCasesInSwitch": true,

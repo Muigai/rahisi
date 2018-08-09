@@ -55,7 +55,7 @@ export declare class ConditionalRenderElement implements Renderable {
     private currentSource;
     private currentNode;
     private fallback;
-    constructor(source: ConditionalElement[], def: Renderable);
+    constructor(source: ConditionalElement[], def: F0<Renderable>);
     mount(parent: View): HTMLElement | Text | SVGElement;
     render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | Text | SVGElement;
 }

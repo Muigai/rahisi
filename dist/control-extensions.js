@@ -11,6 +11,7 @@ var __rest = (this && this.__rest) || function (s, e) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const factory_1 = require("./factory");
 const index_1 = require("./index");
+// add custom parameters checkChanged etc.
 exports.CheckBox = (props) => {
     const { onCheckChanged } = props, rest = __rest(props, ["onCheckChanged"]);
     const attributes = factory_1.React.getAttributes(rest);

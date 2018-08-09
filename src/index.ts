@@ -230,9 +230,9 @@ export class ConditionalRenderElement implements Renderable {
 
     private fallback: ConditionalElement;
 
-    constructor(private readonly source: ConditionalElement[], private readonly def: Renderable) {
+    constructor(private readonly source: ConditionalElement[], private readonly def: F0<Renderable>) {
 
-        this.fallback = { test: () => true, renderable: () => def };
+        this.fallback = { test: () => true, renderable: def };
 
         this.currentSource = source.find((a) => a.test()) || this.fallback;
     }
@@ -271,7 +271,7 @@ export class ConditionalRenderElement implements Renderable {
                             .renderable()
                             .render(document.createDocumentFragment(), watch, isSvg);
 
-                    parent.replaceChild(replacement, this.currentNode); // node
+                    parent.replaceChild(replacement, this.currentNode);
 
                     this.currentNode = replacement;
                 }

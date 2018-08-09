@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.createRef = (() => {
-    let id = 0;
+    let id = 0; // possible collision
     return () => `id_${id++}`;
 })();
 exports.mounted = "mounted";
@@ -43,7 +43,9 @@ class VersionedList {
     constructor(items = new Array()) {
         this.items = items;
         this.nextKey = 0;
+        // tslint:disable-next-line:no-empty
         this.addListener = () => { };
+        // tslint:disable-next-line:no-empty
         this.removeListener = () => { };
     }
     getItems() {
@@ -104,6 +106,7 @@ class BaseElement {
         this.attributes = attributes;
         this.children = children;
     }
+    // factor out
     mount(parent) {
         const notifier = new Notifier();
         const v = this.render(parent, notifier, false);
@@ -112,7 +115,7 @@ class BaseElement {
     }
     render(parent, watch, isSvg) {
         const useSvg = isSvg || this.elementName === "svg";
-        if (this.elementName == null) {
+        if (this.elementName == null) { // it's a fragment
             const view = document.createDocumentFragment();
             this.children.forEach((a) => a.render(view, watch, useSvg));
             parent.appendChild(view);
@@ -132,7 +135,7 @@ class ConditionalRenderElement {
         this.source = source;
         this.def = def;
         this.currentNode = document.createTextNode("");
-        this.fallback = { test: () => true, renderable: () => def };
+        this.fallback = { test: () => true, renderable: def };
         this.currentSource = source.find((a) => a.test()) || this.fallback;
     }
     mount(parent) {
@@ -263,6 +266,7 @@ class TextElement {
     }
 }
 exports.TextElement = TextElement;
+// xss via href
 class NativeAttribute {
     constructor(attribute, value) {
         this.attribute = attribute;
@@ -317,6 +321,7 @@ NativeAttribute.setAttribute = (attribute, element, value, isSvg) => {
     }
 };
 exports.NativeAttribute = NativeAttribute;
+// lose focus when body is clicked
 class FocusA {
     constructor(focus) {
         this.focus = focus;
@@ -360,6 +365,6 @@ class OnHandlerA {
 exports.OnHandlerA = OnHandlerA;
 exports.Template = (props) => {
     const { source, template, placeholder } = props;
-    return new TemplateElement(source, template, placeholder || null);
+    return new TemplateElement(source, template, placeholder || null); // no props
 };
 //# sourceMappingURL=index.js.map

@@ -48,6 +48,8 @@ React.getChildren = (children) => {
     return kids;
 };
 React.appendChild = (kids, child) => {
+    // <>{condition && <a>Display when condition is true</a>}</>
+    // if condition is false, the child is a boolean, but we don't want to display anything
     if (typeof child === "undefined" || typeof child === "boolean" || child === null) {
         return;
     }
