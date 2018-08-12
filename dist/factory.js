@@ -17,6 +17,11 @@ React.getAttributes = (attributes) => {
         for (const k of Object.keys(attributes)) {
             const key = k.toLowerCase().replace("doubleclick", "dblclick");
             const attributeValue = attributes[k];
+            if (key === "onevent") {
+                const { event, handler } = attributeValue;
+                attribs.push(new index_1.OnHandlerA(event, handler));
+                continue;
+            }
             if (key.startsWith("on")) {
                 const event = key.substring(2);
                 attribs.push(new index_1.OnHandlerA(event, attributeValue));
