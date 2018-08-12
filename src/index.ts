@@ -418,12 +418,12 @@ export class TextElement implements Renderable {
 
         if (typeof this.textContent !== "function") {
 
-            this.currentValue = this.textContent;
+            this.currentValue = typeof this.textContent === "boolean" ? "" : this.textContent;
 
             o.textContent = this.currentValue;
         } else {
 
-            this.currentValue = this.textContent();
+            this.currentValue = typeof this.textContent() === "boolean" ? "" : this.textContent();
 
             o.textContent = this.currentValue;
 
