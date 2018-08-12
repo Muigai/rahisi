@@ -251,11 +251,12 @@ class TextElement {
             o.textContent = this.currentValue;
         }
         else {
-            this.currentValue = typeof this.textContent() === "boolean" ? "" : this.textContent();
-            o.textContent = this.currentValue;
             const gen = this.textContent;
+            const getValue = () => typeof gen() === "boolean" ? "" : gen();
+            this.currentValue = getValue();
+            o.textContent = this.currentValue;
             watch.subscribe(() => {
-                const s = gen();
+                const s = getValue();
                 if (this.currentValue !== s) {
                     this.currentValue = s;
                     o.textContent = this.currentValue;
