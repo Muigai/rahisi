@@ -488,7 +488,8 @@ declare namespace React {
         onMounted?: ((this: HTMLElement, ev: SyntheticEvent<T>) => any);
         onUnmounted?: ((this: HTMLElement, ev: SyntheticEvent<T>) => any);
         focus?: boolean | (() => boolean);
-        
+        onEvent: {event: string, handler: (a:any) => any};
+
         // Standard HTML Attributes
         accessKey?: string | (() => string);
         className?: string | (() => string);
