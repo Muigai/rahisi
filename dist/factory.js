@@ -19,7 +19,7 @@ React.getAttributes = (attributes) => {
             const attributeValue = attributes[k];
             if (key === "onevent") {
                 const { event, handler } = attributeValue;
-                attribs.push(new index_1.OnHandlerA(event, handler, true));
+                attribs.push(new index_1.OnCustomHandlerA(event, handler));
                 continue;
             }
             if (key.startsWith("on")) {

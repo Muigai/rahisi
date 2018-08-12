@@ -4,6 +4,7 @@ import {
     ConditionalRenderElement,
     FocusA,
     NativeAttribute,
+    OnCustomHandlerA,
     OnHandlerA,
     Renderable,
     TemplateElement,
@@ -52,7 +53,7 @@ export class React {
 
                 if (key === "onevent") {
                     const { event, handler } = attributeValue as  any;
-                    attribs.push(new OnHandlerA(event, handler, true));
+                    attribs.push(new OnCustomHandlerA(event, handler));
                     continue;
                 }
 

@@ -6,6 +6,7 @@ exports.createRef = (() => {
 })();
 exports.mounted = "mounted";
 exports.unmounted = "unmounted";
+const customEvents = new Map();
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.type === "childList") {
@@ -354,16 +355,34 @@ class FocusA {
 }
 exports.FocusA = FocusA;
 class OnHandlerA {
-    constructor(eventName, handler, useCapture = false) {
+    constructor(eventName, handler) {
         this.eventName = eventName;
         this.handler = handler;
-        this.useCapture = useCapture;
     }
     set(o, _) {
-        o.addEventListener(this.eventName, this.handler, this.useCapture);
+        o.addEventListener(this.eventName, this.handler);
     }
 }
 exports.OnHandlerA = OnHandlerA;
+class OnCustomHandlerA {
+    constructor(customEventName, handler) {
+        this.customEventName = customEventName;
+        this.handler = handler;
+    }
+    set(o, _) {
+        if (!customEvents.has(this.customEventName)) {
+            customEvents.set(this.customEventName, new Array());
+        }
+        const handlers = customEvents.get(this.customEventName);
+        handlers.push(this.handler);
+        o.addEventListener(exports.unmounted, () => handlers.splice(handlers.indexOf(this.handler), 1));
+    }
+}
+exports.OnCustomHandlerA = OnCustomHandlerA;
+exports.dispatchCustomEvent = (event, data) => {
+    const listeners = customEvents.get(event);
+    const _ = listeners && listeners.forEach((a) => a(data));
+};
 exports.Template = (props) => {
     const { source, template, placeholder } = props;
     return new TemplateElement(source, template, placeholder || null); // no props

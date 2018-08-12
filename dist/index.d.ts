@@ -93,10 +93,16 @@ export declare class FocusA implements Attribute {
 export declare class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribute {
     private readonly eventName;
     private readonly handler;
-    private readonly useCapture;
-    constructor(eventName: K | "mounted" | "unmounted", handler: F1<HTMLElementEventMap[K], any>, useCapture?: boolean);
+    constructor(eventName: K | "mounted" | "unmounted", handler: F1<HTMLElementEventMap[K], any>);
     set(o: View, _: Notifier): void;
 }
+export declare class OnCustomHandlerA implements Attribute {
+    private readonly customEventName;
+    private readonly handler;
+    constructor(customEventName: string, handler: F1<any, any>);
+    set(o: View, _: Notifier): void;
+}
+export declare const dispatchCustomEvent: (event: string, data: any) => void;
 interface TemplateParams<T> {
     source: VersionedList<T> | (() => VersionedList<T>);
     template: ((t: T) => Renderable);

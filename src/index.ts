@@ -11,6 +11,8 @@ export const mounted = "mounted";
 
 export const unmounted = "unmounted";
 
+const customEvents = new Map<string, Array<F1<any, any>>>();
+
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.type === "childList") {
@@ -583,14 +585,40 @@ export class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribut
 
     public constructor(
         private readonly eventName: K | "mounted" | "unmounted",
-        private readonly handler: F1<HTMLElementEventMap[K], any>,
-        private readonly useCapture = false) { }
+        private readonly handler: F1<HTMLElementEventMap[K], any>) { }
 
     public set(o: View, _: Notifier) {
 
-        o.addEventListener(this.eventName, this.handler, this.useCapture);
+        o.addEventListener(this.eventName, this.handler);
     }
 }
+
+export class OnCustomHandlerA implements Attribute {
+
+    public constructor(
+        private readonly customEventName: string,
+        private readonly handler: F1<any, any>) { }
+
+    public set(o: View, _: Notifier) {
+
+        if (!customEvents.has(this.customEventName)) {
+            customEvents.set(this.customEventName, new Array<F1<any, any>>());
+        }
+
+        const handlers = customEvents.get(this.customEventName)!;
+
+        handlers.push(this.handler);
+
+        o.addEventListener(unmounted, () => handlers.splice(handlers.indexOf(this.handler), 1));
+    }
+}
+
+export const dispatchCustomEvent = (event: string, data: any) => {
+
+    const listeners = customEvents.get(event);
+
+    const _ = listeners && listeners.forEach((a) => a(data));
+};
 
 interface TemplateParams<T> {
     source: VersionedList<T> | (() => VersionedList<T>);
