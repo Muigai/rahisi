@@ -354,12 +354,13 @@ class FocusA {
 }
 exports.FocusA = FocusA;
 class OnHandlerA {
-    constructor(eventName, handler) {
+    constructor(eventName, handler, useCapture = false) {
         this.eventName = eventName;
         this.handler = handler;
+        this.useCapture = useCapture;
     }
     set(o, _) {
-        o.addEventListener(this.eventName, this.handler);
+        o.addEventListener(this.eventName, this.handler, this.useCapture);
     }
 }
 exports.OnHandlerA = OnHandlerA;

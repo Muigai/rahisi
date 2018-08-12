@@ -583,11 +583,12 @@ export class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribut
 
     public constructor(
         private readonly eventName: K | "mounted" | "unmounted",
-        private readonly handler: F1<HTMLElementEventMap[K], any>) { }
+        private readonly handler: F1<HTMLElementEventMap[K], any>,
+        private readonly useCapture = false) { }
 
     public set(o: View, _: Notifier) {
 
-        o.addEventListener(this.eventName, this.handler);
+        o.addEventListener(this.eventName, this.handler, this.useCapture);
     }
 }
 

@@ -52,7 +52,7 @@ export class React {
 
                 if (key === "onevent") {
                     const { event, handler } = attributeValue as  any;
-                    attribs.push(new OnHandlerA(event, handler));
+                    attribs.push(new OnHandlerA(event, handler, true));
                     continue;
                 }
 
