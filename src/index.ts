@@ -589,7 +589,7 @@ export class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribut
         private readonly eventName: K | "mounted" | "unmounted",
         private readonly handler: F1<HTMLElementEventMap[K], any>) { }
 
-    public set(o: View, _: Notifier) {
+    public set(o: View) {
 
         o.addEventListener(this.eventName, this.handler);
     }
@@ -601,7 +601,7 @@ export class OnCustomHandlerA implements Attribute {
         private readonly customEventName: string,
         private readonly handler: F1<any, any>) { }
 
-    public set(o: View, _: Notifier) {
+    public set(o: View) {
 
         if (!customEvents.has(this.customEventName)) {
             customEvents.set(this.customEventName, new Array<F1<any, any>>());
@@ -620,6 +620,10 @@ export const dispatchCustomEvent = (event: string, data: any) => {
     const listeners = customEvents.get(event);
 
     const _ = listeners && listeners.forEach((a) => a(data));
+};
+
+export const subscribeToCustomEvent = (customEventName: string, handler: F1<any, any>) => {
+    new OnCustomHandlerA(customEventName, handler).set(document.body);
 };
 
 interface TemplateParams<T> {

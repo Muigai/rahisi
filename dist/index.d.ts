@@ -94,15 +94,16 @@ export declare class OnHandlerA<K extends keyof HTMLElementEventMap> implements 
     private readonly eventName;
     private readonly handler;
     constructor(eventName: K | "mounted" | "unmounted", handler: F1<HTMLElementEventMap[K], any>);
-    set(o: View, _: Notifier): void;
+    set(o: View): void;
 }
 export declare class OnCustomHandlerA implements Attribute {
     private readonly customEventName;
     private readonly handler;
     constructor(customEventName: string, handler: F1<any, any>);
-    set(o: View, _: Notifier): void;
+    set(o: View): void;
 }
 export declare const dispatchCustomEvent: (event: string, data: any) => void;
+export declare const subscribeToCustomEvent: (customEventName: string, handler: F1<any, any>) => void;
 interface TemplateParams<T> {
     source: VersionedList<T> | (() => VersionedList<T>);
     template: ((t: T) => Renderable);

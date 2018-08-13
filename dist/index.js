@@ -360,7 +360,7 @@ class OnHandlerA {
         this.eventName = eventName;
         this.handler = handler;
     }
-    set(o, _) {
+    set(o) {
         o.addEventListener(this.eventName, this.handler);
     }
 }
@@ -370,7 +370,7 @@ class OnCustomHandlerA {
         this.customEventName = customEventName;
         this.handler = handler;
     }
-    set(o, _) {
+    set(o) {
         if (!customEvents.has(this.customEventName)) {
             customEvents.set(this.customEventName, new Array());
         }
@@ -383,6 +383,9 @@ exports.OnCustomHandlerA = OnCustomHandlerA;
 exports.dispatchCustomEvent = (event, data) => {
     const listeners = customEvents.get(event);
     const _ = listeners && listeners.forEach((a) => a(data));
+};
+exports.subscribeToCustomEvent = (customEventName, handler) => {
+    new OnCustomHandlerA(customEventName, handler).set(document.body);
 };
 exports.Template = (props) => {
     const { source, template, placeholder } = props;
