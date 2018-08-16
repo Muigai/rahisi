@@ -51,12 +51,6 @@ export class React {
 
                 const attributeValue = attributes[k];
 
-                if (key === "onevent") {
-                    const { event, handler } = attributeValue as  any;
-                    attribs.push(new OnCustomHandlerA(event, handler));
-                    continue;
-                }
-
                 if (key.startsWith("on")) {
                     const event = key.substring(2) as K;
                     attribs.push(new OnHandlerA(event, attributeValue as F1<HTMLElementEventMap[K], any>));

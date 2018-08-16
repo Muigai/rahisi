@@ -102,8 +102,8 @@ export declare class OnCustomHandlerA implements Attribute {
     constructor(customEventName: string, handler: F1<any, any>);
     set(o: View): void;
 }
-export declare const dispatchCustomEvent: (event: string, data: any) => void;
-export declare const subscribeToCustomEvent: (customEventName: string, handler: F1<any, any>) => void;
+export declare const publish: (eventName: string, data: any) => void;
+export declare const subscribe: (customEventName: string, handler: F1<any, any>) => void;
 interface TemplateParams<T> {
     source: VersionedList<T> | (() => VersionedList<T>);
     template: ((t: T) => Renderable);

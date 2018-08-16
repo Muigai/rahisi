@@ -32,7 +32,7 @@ export const TextBox = (props: { onTextChanged?: A1<string> } & R.InputHTMLAttri
                 };
                 return onKeyUp;
             })();
-        attributes.push(new OnHandlerA("keyup", handler as any));
+        attributes.push(new OnHandlerA("input", handler as any));
     }
     attributes.push(new NativeAttribute("type", "text"));
     return new BaseElement("input", attributes) as any;

@@ -380,11 +380,11 @@ class OnCustomHandlerA {
     }
 }
 exports.OnCustomHandlerA = OnCustomHandlerA;
-exports.dispatchCustomEvent = (event, data) => {
-    const listeners = customEvents.get(event);
+exports.publish = (eventName, data) => {
+    const listeners = customEvents.get(eventName);
     const _ = listeners && listeners.forEach((a) => a(data));
 };
-exports.subscribeToCustomEvent = (customEventName, handler) => {
+exports.subscribe = (customEventName, handler) => {
     new OnCustomHandlerA(customEventName, handler).set(document.body);
 };
 exports.Template = (props) => {

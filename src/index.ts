@@ -615,14 +615,14 @@ export class OnCustomHandlerA implements Attribute {
     }
 }
 
-export const dispatchCustomEvent = (event: string, data: any) => {
+export const publish = (eventName: string, data: any) => {
 
-    const listeners = customEvents.get(event);
+    const listeners = customEvents.get(eventName);
 
     const _ = listeners && listeners.forEach((a) => a(data));
 };
 
-export const subscribeToCustomEvent = (customEventName: string, handler: F1<any, any>) => {
+export const subscribe = (customEventName: string, handler: F1<any, any>) => {
     new OnCustomHandlerA(customEventName, handler).set(document.body);
 };
 

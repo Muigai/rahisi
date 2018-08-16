@@ -1,3 +1,4 @@
+// Type defs modified from React as below
 // Type definitions for React 16.4
 // Project: http://facebook.github.io/react/
 // Definitions by: Asana <https://asana.com>
@@ -32,18 +33,18 @@ declare namespace React {
     // React Elements
     // ----------------------------------------------------------------------
 
-    interface Attributes { }
+    interface Attributes {}
 
-    interface ClassAttributes<T> { }
+    interface ClassAttributes<T> {}
 
     interface ReactElement<P> {
         props: P;
         mount(parent: HTMLElement |
-            SVGElement |
-            DocumentFragment): HTMLElement | SVGElement | Text;
+                       SVGElement |
+                       DocumentFragment): HTMLElement | SVGElement | Text;
         render(parent: HTMLElement | SVGElement | DocumentFragment,
-            watch: never,
-            isSvg: never): HTMLElement | SVGElement | Text;
+               watch: never,
+               isSvg: never): HTMLElement | SVGElement | Text; 
     }
 
     // string fallback for custom web-components
@@ -86,7 +87,7 @@ declare namespace React {
     type ReactText = string | number;
     type ReactChild = ReactElement<any> | ReactText;
 
-    interface ReactNodeArray extends Array<ReactNode> { }
+    interface ReactNodeArray extends Array<ReactNode> {}
     type ReactFragment = {} | ReactNodeArray;
     type ReactNode = ReactChild | ReactFragment | string | number | boolean | null | undefined;
 
@@ -103,7 +104,7 @@ declare namespace React {
         cancelable: boolean;
         defaultPrevented: boolean;
         eventPhase: number;
-        isTrusted: boolean;
+        isTrusted: boolean; 
         nativeEvent: Event;
         preventDefault(): void;
         // isDefaultPrevented(): boolean; // x
@@ -240,7 +241,7 @@ declare namespace React {
         propertyName: string;
         pseudoElement: string;
     }
-
+    
     //
     // Event Handler Types
     // ----------------------------------------------------------------------
@@ -487,7 +488,6 @@ declare namespace React {
         onMounted?: ((this: HTMLElement, ev: SyntheticEvent<T>) => any);
         onUnmounted?: ((this: HTMLElement, ev: SyntheticEvent<T>) => any);
         focus?: boolean | (() => boolean);
-        onEvent?: { event: string, handler: (event: any) => any };
 
         // Standard HTML Attributes
         accessKey?: string | (() => string);
@@ -848,7 +848,7 @@ declare namespace React {
     }
 
     // tslint:disable-next-line:no-empty-interface
-    interface AudioHTMLAttributes<T> extends MediaHTMLAttributes<T> { }
+    interface AudioHTMLAttributes<T> extends MediaHTMLAttributes<T> {}
 
     interface AreaHTMLAttributes<T> extends HTMLAttributes<T> {
         alt?: string | (() => string);
@@ -1236,10 +1236,10 @@ declare namespace React {
     //   - "string"
     //   - union of string literals
     interface SVGAttributes<T> extends DOMAttributes<T> {
-        // extension
-        onMounted?: ((this: SVGElement, ev: SyntheticEvent<T>) => any);
-        onUnmounted?: ((this: SVGElement, ev: SyntheticEvent<T>) => any);
-        focus?: boolean | (() => boolean);
+         // extension
+         onMounted?: ((this: SVGElement, ev: SyntheticEvent<T>) => any);
+         onUnmounted?: ((this: SVGElement, ev: SyntheticEvent<T>) => any);
+         focus?: boolean | (() => boolean);
 
         // Attributes which also defined in HTMLAttributes
         // See comment in SVGDOMPropertyConfig.js

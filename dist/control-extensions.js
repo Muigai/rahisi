@@ -36,7 +36,7 @@ exports.TextBox = (props) => {
             };
             return onKeyUp;
         })();
-        attributes.push(new index_1.OnHandlerA("keyup", handler));
+        attributes.push(new index_1.OnHandlerA("input", handler));
     }
     attributes.push(new index_1.NativeAttribute("type", "text"));
     return new index_1.BaseElement("input", attributes);
