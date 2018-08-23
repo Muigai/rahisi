@@ -1,4 +1,4 @@
-import { A0, A1, Either, F0, F1, View } from "rahisi-type-utils";
+import { A0, A1, Either, F0, F1 } from "rahisi-type-utils";
 export declare const createRef: () => string;
 export declare const mounted = "mounted";
 export declare const unmounted = "unmounted";
@@ -9,11 +9,11 @@ declare class Notifier {
     subscribe(onNext: A0, dependency: Node): void;
 }
 export interface Attribute {
-    set(o: View | SVGElement, watch: Notifier, isSvg: boolean): void;
+    set(o: HTMLElement | SVGElement, watch: Notifier, isSvg: boolean): void;
 }
 export interface Renderable {
-    mount(parent: View | SVGElement | DocumentFragment): View | SVGElement | Text;
-    render(parent: View | SVGElement | DocumentFragment, watch: Notifier, isSvg: boolean): View | SVGElement | Text;
+    mount(parent: HTMLElement | SVGElement | DocumentFragment): HTMLElement | SVGElement | Text;
+    render(parent: HTMLElement | SVGElement | DocumentFragment, watch: Notifier, isSvg: boolean): HTMLElement | SVGElement | Text;
 }
 interface KeyValuePair<K, V> {
     key: K;
@@ -42,8 +42,8 @@ export declare class BaseElement implements Renderable {
     private readonly attributes;
     private readonly children;
     constructor(elementName: string | undefined, attributes?: Attribute[], children?: Renderable[]);
-    mount(parent: View): HTMLElement | SVGElement;
-    render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | SVGElement;
+    mount(parent: HTMLElement): HTMLElement | SVGElement;
+    render(parent: HTMLElement, watch: Notifier, isSvg: boolean): HTMLElement | SVGElement;
 }
 export interface ConditionalElement {
     test: F0<boolean>;
@@ -56,8 +56,8 @@ export declare class ConditionalRenderElement implements Renderable {
     private currentNode;
     private fallback;
     constructor(source: ConditionalElement[], def: F0<Renderable>);
-    mount(parent: View): HTMLElement | Text | SVGElement;
-    render(parent: View, watch: Notifier, isSvg: boolean): HTMLElement | Text | SVGElement;
+    mount(parent: HTMLElement): HTMLElement | Text | SVGElement;
+    render(parent: HTMLElement, watch: Notifier, isSvg: boolean): HTMLElement | Text | SVGElement;
 }
 export declare class TemplateElement<T> implements Renderable {
     private readonly source;
@@ -66,15 +66,15 @@ export declare class TemplateElement<T> implements Renderable {
     private nodes;
     private currentValue;
     constructor(source: Either<VersionedList<T>>, template: F1<T, Renderable>, placeholder: Renderable | null);
-    mount(parent: View): HTMLElement;
-    render(o: View, watch: Notifier, isSvg: boolean): HTMLElement;
+    mount(parent: HTMLElement): HTMLElement;
+    render(o: HTMLElement, watch: Notifier, isSvg: boolean): HTMLElement;
 }
 export declare class TextElement implements Renderable {
     private readonly textContent;
     private currentValue;
     constructor(textContent: Either<string>);
-    mount(parent: View): Text;
-    render(parent: View, watch: Notifier, _: boolean): Text;
+    mount(parent: HTMLElement): Text;
+    render(parent: HTMLElement, watch: Notifier, _: boolean): Text;
 }
 export declare class NativeAttribute implements Attribute {
     private readonly attribute;
@@ -82,28 +82,20 @@ export declare class NativeAttribute implements Attribute {
     private static setAttribute;
     private currentValue;
     constructor(attribute: string, value: Either<string>);
-    set(o: View, watch: Notifier, isSvg: boolean): void;
+    set(o: HTMLElement, watch: Notifier, isSvg: boolean): void;
 }
 export declare class FocusA implements Attribute {
     private readonly focus;
     private currentValue;
     constructor(focus: Either<boolean>);
-    set(o: View, watch: Notifier): void;
+    set(o: HTMLElement, watch: Notifier): void;
 }
 export declare class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribute {
     private readonly eventName;
     private readonly handler;
     constructor(eventName: K | "mounted" | "unmounted", handler: F1<HTMLElementEventMap[K], any>);
-    set(o: View): void;
+    set(o: HTMLElement): void;
 }
-export declare class OnCustomHandlerA implements Attribute {
-    private readonly customEventName;
-    private readonly handler;
-    constructor(customEventName: string, handler: F1<any, any>);
-    set(o: View): void;
-}
-export declare const publish: (eventName: string, data: any) => void;
-export declare const subscribe: (customEventName: string, handler: F1<any, any>) => void;
 interface TemplateParams<T> {
     source: VersionedList<T> | (() => VersionedList<T>);
     template: ((t: T) => Renderable);

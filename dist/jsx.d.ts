@@ -33,18 +33,18 @@ declare namespace React {
     // React Elements
     // ----------------------------------------------------------------------
 
-    interface Attributes {}
+    interface Attributes { }
 
-    interface ClassAttributes<T> {}
+    interface ClassAttributes<T> { }
 
     interface ReactElement<P> {
         props: P;
         mount(parent: HTMLElement |
-                       SVGElement |
-                       DocumentFragment): HTMLElement | SVGElement | Text;
+            SVGElement |
+            DocumentFragment): HTMLElement | SVGElement | Text;
         render(parent: HTMLElement | SVGElement | DocumentFragment,
-               watch: never,
-               isSvg: never): HTMLElement | SVGElement | Text; 
+            watch: never,
+            isSvg: never): HTMLElement | SVGElement | Text;
     }
 
     // string fallback for custom web-components
@@ -87,7 +87,7 @@ declare namespace React {
     type ReactText = string | number;
     type ReactChild = ReactElement<any> | ReactText;
 
-    interface ReactNodeArray extends Array<ReactNode> {}
+    interface ReactNodeArray extends Array<ReactNode> { }
     type ReactFragment = {} | ReactNodeArray;
     type ReactNode = ReactChild | ReactFragment | string | number | boolean | null | undefined;
 
@@ -95,39 +95,29 @@ declare namespace React {
     // Event System
     // ----------------------------------------------------------------------
     // _ | () => _ is wrong
-    interface SyntheticEvent<T = Element> {
-        bubbles: boolean;
-        /**
-         * A reference to the element on which the event listener is registered.
-         */
-        currentTarget: EventTarget & T;
-        cancelable: boolean;
-        defaultPrevented: boolean;
-        eventPhase: number;
-        isTrusted: boolean; 
-        nativeEvent: Event;
+    interface RealEvent<T = Element> {
+        readonly bubbles: boolean;
+        cancelBubble: boolean;
+        readonly cancelable: boolean;
+        readonly composed: boolean;
+        readonly currentTarget: EventTarget & T;
+        readonly defaultPrevented: boolean;
+        readonly eventPhase: number;
+        readonly isTrusted: boolean;
+        returnValue: boolean;
+        readonly target: EventTarget | null;
+        readonly timeStamp: number;
+        readonly type: string;
         preventDefault(): void;
-        // isDefaultPrevented(): boolean; // x
+        stopImmediatePropagation(): void;
         stopPropagation(): void;
-        // isPropagationStopped(): boolean; // x
-        // persist(): void; // x
-        // If you thought this should be `EventTarget & T`, see https://github.com/DefinitelyTyped/DefinitelyTyped/pull/12239
-        /**
-         * A reference to the element from which the event was originally dispatched.
-         * This might be a child element to the element on which the event listener is registered.
-         *
-         * @see currentTarget
-         */
-        target: EventTarget;
-        timeStamp: number;
-        type: string;
     }
 
-    interface ClipboardEvent<T = Element> extends SyntheticEvent<T> {
+    interface ClipboardEvent<T = Element> extends RealEvent<T> {
         clipboardData: DataTransfer;
     }
 
-    interface CompositionEvent<T = Element> extends SyntheticEvent<T> {
+    interface CompositionEvent<T = Element> extends RealEvent<T> {
         data: string;
     }
 
@@ -146,24 +136,24 @@ declare namespace React {
         isPrimary: boolean;
     }
 
-    interface FocusEvent<T = Element> extends SyntheticEvent<T> {
+    interface FocusEvent<T = Element> extends RealEvent<T> {
         relatedTarget: EventTarget;
         target: EventTarget & T;
     }
 
     // tslint:disable-next-line:no-empty-interface
-    interface FormEvent<T = Element> extends SyntheticEvent<T> {
+    interface FormEvent<T = Element> extends RealEvent<T> {
     }
 
-    interface InvalidEvent<T = Element> extends SyntheticEvent<T> {
+    interface InvalidEvent<T = Element> extends RealEvent<T> {
         target: EventTarget & T;
     }
 
-    interface ChangeEvent<T = Element> extends SyntheticEvent<T> {
+    interface ChangeEvent<T = Element> extends RealEvent<T> {
         target: EventTarget & T;
     }
 
-    interface KeyboardEvent<T = Element> extends SyntheticEvent<T> {
+    interface KeyboardEvent<T = Element> extends RealEvent<T> {
         altKey: boolean;
         charCode: number;
         ctrlKey: boolean;
@@ -184,7 +174,7 @@ declare namespace React {
         which: number;
     }
 
-    interface MouseEvent<T = Element> extends SyntheticEvent<T> {
+    interface MouseEvent<T = Element> extends RealEvent<T> {
         altKey: boolean;
         button: number;
         buttons: number;
@@ -204,7 +194,7 @@ declare namespace React {
         shiftKey: boolean;
     }
 
-    interface TouchEvent<T = Element> extends SyntheticEvent<T> {
+    interface TouchEvent<T = Element> extends RealEvent<T> {
         altKey: boolean;
         changedTouches: TouchList;
         ctrlKey: boolean;
@@ -218,7 +208,7 @@ declare namespace React {
         touches: TouchList;
     }
 
-    interface UIEvent<T = Element> extends SyntheticEvent<T> {
+    interface UIEvent<T = Element> extends RealEvent<T> {
         detail: number;
         view: AbstractView;
     }
@@ -230,25 +220,25 @@ declare namespace React {
         deltaZ: number;
     }
 
-    interface AnimationEvent<T = Element> extends SyntheticEvent<T> {
+    interface AnimationEvent<T = Element> extends RealEvent<T> {
         animationName: string;
         elapsedTime: number;
         pseudoElement: string;
     }
 
-    interface TransitionEvent<T = Element> extends SyntheticEvent<T> {
+    interface TransitionEvent<T = Element> extends RealEvent<T> {
         elapsedTime: number;
         propertyName: string;
         pseudoElement: string;
     }
-    
+
     //
     // Event Handler Types
     // ----------------------------------------------------------------------
 
-    type EventHandler<E extends SyntheticEvent<any>> = { bivarianceHack(event: E): void }["bivarianceHack"];
+    type EventHandler<E extends RealEvent<any>> = { bivarianceHack(event: E): void }["bivarianceHack"];
 
-    type ReactEventHandler<T = Element> = EventHandler<SyntheticEvent<T>>;
+    type ReactEventHandler<T = Element> = EventHandler<RealEvent<T>>;
 
     type ClipboardEventHandler<T = Element> = EventHandler<ClipboardEvent<T>>;
     type CompositionEventHandler<T = Element> = EventHandler<CompositionEvent<T>>;
@@ -485,8 +475,8 @@ declare namespace React {
         // suppressHydrationWarning?: boolean | (() => boolean);
 
         // extension
-        onMounted?: ((this: HTMLElement, ev: SyntheticEvent<T>) => any);
-        onUnmounted?: ((this: HTMLElement, ev: SyntheticEvent<T>) => any);
+        onMounted?: ((this: HTMLElement, ev: RealEvent<T>) => any);
+        onUnmounted?: ((this: HTMLElement, ev: RealEvent<T>) => any);
         focus?: boolean | (() => boolean);
 
         // Standard HTML Attributes
@@ -741,8 +731,8 @@ declare namespace React {
     //     autoFocus?: boolean | (() => boolean);
     //     autoPlay?: boolean | (() => boolean);
     //     capture?: boolean | string;
-    //     cellPadding?: number | string | (() => number) | (() => string);
-    //     cellSpacing?: number | string | (() => number) | (() => string);
+    //     cellPadding?: number | string | (() => number | string);
+    //     cellSpacing?: number | string | (() => number | string);
     //     charSet?: string | (() => string);
     //     challenge?: string | (() => string);
     //     checked?: boolean | (() => boolean);
@@ -767,9 +757,9 @@ declare namespace React {
     //     formMethod?: string | (() => string);
     //     formNoValidate?: boolean | (() => boolean);
     //     formTarget?: string | (() => string);
-    //     frameBorder?: number | string | (() => number) | (() => string);
+    //     frameBorder?: number | string | (() => number | string);
     //     headers?: string | (() => string);
-    //     height?: number | string | (() => number) | (() => string);
+    //     height?: number | string | (() => number | string);
     //     high?: number | (() => number);
     //     href?: string | (() => string);
     //     hrefLang?: string | (() => string);
@@ -786,12 +776,12 @@ declare namespace React {
     //     manifest?: string | (() => string);
     //     marginHeight?: number | (() => number);
     //     marginWidth?: number | (() => number);
-    //     max?: number | string | (() => number) | (() => string);
+    //     max?: number | string | (() => number | string);
     //     maxLength?: number | (() => number);
     //     media?: string | (() => string);
     //     mediaGroup?: string | (() => string);
     //     method?: string | (() => string);
-    //     min?: number | string | (() => number) | (() => string);
+    //     min?: number | string | (() => number | string);
     //     minLength?: number | (() => number);
     //     multiple?: boolean | (() => boolean);
     //     muted?: boolean | (() => boolean);
@@ -826,13 +816,13 @@ declare namespace React {
     //     srcLang?: string | (() => string);
     //     srcSet?: string | (() => string);
     //     start?: number | (() => number);
-    //     step?: number | string | (() => number) | (() => string);
+    //     step?: number | string | (() => number | string);
     //     summary?: string | (() => string);
     //     target?: string | (() => string);
     //     type?: string | (() => string);
     //     useMap?: string | (() => string);
-    //     value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
-    //     width?: number | string | (() => number) | (() => string);
+    //     value?: string | string[] | number | (() => string | string[] | number);
+    //     width?: number | string | (() => number | string);
     //     wmode?: string | (() => string);
     //     wrap?: string | (() => string);
     // }
@@ -848,7 +838,7 @@ declare namespace React {
     }
 
     // tslint:disable-next-line:no-empty-interface
-    interface AudioHTMLAttributes<T> extends MediaHTMLAttributes<T> {}
+    interface AudioHTMLAttributes<T> extends MediaHTMLAttributes<T> { }
 
     interface AreaHTMLAttributes<T> extends HTMLAttributes<T> {
         alt?: string | (() => string);
@@ -882,17 +872,17 @@ declare namespace React {
         formTarget?: string | (() => string);
         name?: string | (() => string);
         type?: string | (() => string);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        value?: string | string[] | number | (() => string | string[] | number);
     }
 
     interface CanvasHTMLAttributes<T> extends HTMLAttributes<T> {
-        height?: number | string | (() => number) | (() => string);
-        width?: number | string | (() => number) | (() => string);
+        height?: number | string | (() => number | string);
+        width?: number | string | (() => number | string);
     }
 
     interface ColHTMLAttributes<T> extends HTMLAttributes<T> {
         span?: number | (() => number);
-        width?: number | string | (() => number) | (() => string);
+        width?: number | string | (() => number | string);
     }
 
     interface ColgroupHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -913,10 +903,10 @@ declare namespace React {
     }
 
     interface EmbedHTMLAttributes<T> extends HTMLAttributes<T> {
-        height?: number | string | (() => number) | (() => string);
+        height?: number | string | (() => number | string);
         src?: string | (() => string);
         type?: string | (() => string);
-        width?: number | string | (() => number) | (() => string);
+        width?: number | string | (() => number | string);
     }
 
     interface FieldsetHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -943,8 +933,8 @@ declare namespace React {
     interface IframeHTMLAttributes<T> extends HTMLAttributes<T> {
         allowFullScreen?: boolean | (() => boolean);
         allowTransparency?: boolean | (() => boolean);
-        frameBorder?: number | string | (() => number) | (() => string);
-        height?: number | string | (() => number) | (() => string);
+        frameBorder?: number | string | (() => number | string);
+        height?: number | string | (() => number | string);
         marginHeight?: number | (() => number);
         marginWidth?: number | (() => number);
         name?: string | (() => string);
@@ -953,18 +943,18 @@ declare namespace React {
         seamless?: boolean | (() => boolean);
         src?: string | (() => string);
         srcDoc?: string | (() => string);
-        width?: number | string | (() => number) | (() => string);
+        width?: number | string | (() => number | string);
     }
 
     interface ImgHTMLAttributes<T> extends HTMLAttributes<T> {
         alt?: string | (() => string);
         crossOrigin?: "anonymous" | "use-credentials" | "";
-        height?: number | string | (() => number) | (() => string);
+        height?: number | string | (() => number | string);
         sizes?: string | (() => string);
         src?: string | (() => string);
         srcSet?: string | (() => string);
         useMap?: string | (() => string);
-        width?: number | string | (() => number) | (() => string);
+        width?: number | string | (() => number | string);
     }
 
     interface InsHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -987,11 +977,11 @@ declare namespace React {
         formMethod?: string | (() => string);
         formNoValidate?: boolean | (() => boolean);
         formTarget?: string | (() => string);
-        height?: number | string | (() => number) | (() => string);
+        height?: number | string | (() => number | string);
         list?: string | (() => string);
-        max?: number | string | (() => number) | (() => string);
+        max?: number | string | (() => number | string);
         maxLength?: number | (() => number);
-        min?: number | string | (() => number) | (() => string);
+        min?: number | string | (() => number | string);
         minLength?: number | (() => number);
         multiple?: boolean | (() => boolean);
         name?: string | (() => string);
@@ -1001,10 +991,10 @@ declare namespace React {
         required?: boolean | (() => boolean);
         size?: number | (() => number);
         src?: string | (() => string);
-        step?: number | string | (() => number) | (() => string);
+        step?: number | string | (() => number | string);
         type?: string | (() => string);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
-        width?: number | string | (() => number) | (() => string);
+        value?: string | string[] | number | (() => string | string[] | number);
+        width?: number | string | (() => number | string);
 
         onChange?: ChangeEventHandler<T>;
     }
@@ -1025,7 +1015,7 @@ declare namespace React {
     }
 
     interface LiHTMLAttributes<T> extends HTMLAttributes<T> {
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        value?: string | string[] | number | (() => string | string[] | number);
     }
 
     interface LinkHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -1072,10 +1062,10 @@ declare namespace React {
         form?: string | (() => string);
         high?: number | (() => number);
         low?: number | (() => number);
-        max?: number | string | (() => number) | (() => string);
-        min?: number | string | (() => number) | (() => string);
+        max?: number | string | (() => number | string);
+        min?: number | string | (() => number | string);
         optimum?: number | (() => number);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        value?: string | string[] | number | (() => string | string[] | number);
     }
 
     interface QuoteHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -1086,11 +1076,11 @@ declare namespace React {
         classID?: string | (() => string);
         data?: string | (() => string);
         form?: string | (() => string);
-        height?: number | string | (() => number) | (() => string);
+        height?: number | string | (() => number | string);
         name?: string | (() => string);
         type?: string | (() => string);
         useMap?: string | (() => string);
-        width?: number | string | (() => number) | (() => string);
+        width?: number | string | (() => number | string);
         wmode?: string | (() => string);
     }
 
@@ -1109,7 +1099,7 @@ declare namespace React {
         disabled?: boolean | (() => boolean);
         label?: string | (() => string);
         selected?: boolean | (() => boolean);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        value?: string | string[] | number | (() => string | string[] | number);
     }
 
     interface OutputHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -1120,12 +1110,12 @@ declare namespace React {
 
     interface ParamHTMLAttributes<T> extends HTMLAttributes<T> {
         name?: string | (() => string);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        value?: string | string[] | number | (() => string | string[] | number);
     }
 
     interface ProgressHTMLAttributes<T> extends HTMLAttributes<T> {
-        max?: number | string | (() => number) | (() => string);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        max?: number | string | (() => number | string);
+        value?: string | string[] | number | (() => string | string[] | number);
     }
 
     interface ScriptHTMLAttributes<T> extends HTMLAttributes<T> {
@@ -1149,7 +1139,7 @@ declare namespace React {
         name?: string | (() => string);
         required?: boolean | (() => boolean);
         size?: number | (() => number);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        value?: string | string[] | number | (() => string | string[] | number);
         onChange?: ChangeEventHandler<T>;
     }
 
@@ -1169,8 +1159,8 @@ declare namespace React {
     }
 
     interface TableHTMLAttributes<T> extends HTMLAttributes<T> {
-        cellPadding?: number | string | (() => number) | (() => string);
-        cellSpacing?: number | string | (() => number) | (() => string);
+        cellPadding?: number | string | (() => number | string);
+        cellSpacing?: number | string | (() => number | string);
         summary?: string | (() => string);
     }
 
@@ -1188,7 +1178,7 @@ declare namespace React {
         readOnly?: boolean | (() => boolean);
         required?: boolean | (() => boolean);
         rows?: number | (() => number);
-        value?: string | string[] | number | (() => string) | (() => string[]) | (() => number);
+        value?: string | string[] | number | (() => string | string[] | number);
         wrap?: string | (() => string);
 
         onChange?: ChangeEventHandler<T>;
@@ -1221,10 +1211,10 @@ declare namespace React {
     }
 
     interface VideoHTMLAttributes<T> extends MediaHTMLAttributes<T> {
-        height?: number | string | (() => number) | (() => string);
+        height?: number | string | (() => number | string);
         playsInline?: boolean | (() => boolean);
         poster?: string | (() => string);
-        width?: number | string | (() => number) | (() => string);
+        width?: number | string | (() => number | string);
     }
 
     // this list is "complete" in that it contains every SVG attribute
@@ -1236,256 +1226,256 @@ declare namespace React {
     //   - "string"
     //   - union of string literals
     interface SVGAttributes<T> extends DOMAttributes<T> {
-         // extension
-         onMounted?: ((this: SVGElement, ev: SyntheticEvent<T>) => any);
-         onUnmounted?: ((this: SVGElement, ev: SyntheticEvent<T>) => any);
-         focus?: boolean | (() => boolean);
+        // extension
+        onMounted?: ((this: SVGElement, ev: RealEvent<T>) => any);
+        onUnmounted?: ((this: SVGElement, ev: RealEvent<T>) => any);
+        focus?: boolean | (() => boolean);
 
         // Attributes which also defined in HTMLAttributes
         // See comment in SVGDOMPropertyConfig.js
         className?: string | (() => string);
         color?: string | (() => string);
-        height?: number | string | (() => number) | (() => string);
+        height?: number | string | (() => number | string);
         id?: string | (() => string);
         lang?: string | (() => string);
-        max?: number | string | (() => number) | (() => string);
+        max?: number | string | (() => number | string);
         media?: string | (() => string);
         method?: string | (() => string);
-        min?: number | string | (() => number) | (() => string);
+        min?: number | string | (() => number | string);
         name?: string | (() => string);
         style?: CSSProperties;
         target?: string | (() => string);
         type?: string | (() => string);
-        width?: number | string | (() => number) | (() => string);
+        width?: number | string | (() => number | string);
 
         // Other HTML properties supported by SVG elements in browsers
         role?: string | (() => string);
         tabIndex?: number | (() => number);
 
         // SVG Specific attributes
-        accentHeight?: number | string | (() => number) | (() => string);
+        accentHeight?: number | string | (() => number | string);
         accumulate?: "none" | "sum";
         additive?: "replace" | "sum";
         alignmentBaseline?: "auto" | "baseline" | "before-edge" | "text-before-edge" | "middle" | "central" | "after-edge" |
         "text-after-edge" | "ideographic" | "alphabetic" | "hanging" | "mathematical" | "inherit";
         allowReorder?: "no" | "yes";
-        alphabetic?: number | string | (() => number) | (() => string);
-        amplitude?: number | string | (() => number) | (() => string);
+        alphabetic?: number | string | (() => number | string);
+        amplitude?: number | string | (() => number | string);
         arabicForm?: "initial" | "medial" | "terminal" | "isolated";
-        ascent?: number | string | (() => number) | (() => string);
+        ascent?: number | string | (() => number | string);
         attributeName?: string | (() => string);
         attributeType?: string | (() => string);
-        autoReverse?: number | string | (() => number) | (() => string);
-        azimuth?: number | string | (() => number) | (() => string);
-        baseFrequency?: number | string | (() => number) | (() => string);
-        baselineShift?: number | string | (() => number) | (() => string);
-        baseProfile?: number | string | (() => number) | (() => string);
-        bbox?: number | string | (() => number) | (() => string);
-        begin?: number | string | (() => number) | (() => string);
-        bias?: number | string | (() => number) | (() => string);
-        by?: number | string | (() => number) | (() => string);
-        calcMode?: number | string | (() => number) | (() => string);
-        capHeight?: number | string | (() => number) | (() => string);
-        clip?: number | string | (() => number) | (() => string);
+        autoReverse?: number | string | (() => number | string);
+        azimuth?: number | string | (() => number | string);
+        baseFrequency?: number | string | (() => number | string);
+        baselineShift?: number | string | (() => number | string);
+        baseProfile?: number | string | (() => number | string);
+        bbox?: number | string | (() => number | string);
+        begin?: number | string | (() => number | string);
+        bias?: number | string | (() => number | string);
+        by?: number | string | (() => number | string);
+        calcMode?: number | string | (() => number | string);
+        capHeight?: number | string | (() => number | string);
+        clip?: number | string | (() => number | string);
         clipPath?: string | (() => string);
-        clipPathUnits?: number | string | (() => number) | (() => string);
-        clipRule?: number | string | (() => number) | (() => string);
-        colorInterpolation?: number | string | (() => number) | (() => string);
+        clipPathUnits?: number | string | (() => number | string);
+        clipRule?: number | string | (() => number | string);
+        colorInterpolation?: number | string | (() => number | string);
         colorInterpolationFilters?: "auto" | "sRGB" | "linearRGB" | "inherit";
-        colorProfile?: number | string | (() => number) | (() => string);
-        colorRendering?: number | string | (() => number) | (() => string);
-        contentScriptType?: number | string | (() => number) | (() => string);
-        contentStyleType?: number | string | (() => number) | (() => string);
-        cursor?: number | string | (() => number) | (() => string);
-        cx?: number | string | (() => number) | (() => string);
-        cy?: number | string | (() => number) | (() => string);
+        colorProfile?: number | string | (() => number | string);
+        colorRendering?: number | string | (() => number | string);
+        contentScriptType?: number | string | (() => number | string);
+        contentStyleType?: number | string | (() => number | string);
+        cursor?: number | string | (() => number | string);
+        cx?: number | string | (() => number | string);
+        cy?: number | string | (() => number | string);
         d?: string | (() => string);
-        decelerate?: number | string | (() => number) | (() => string);
-        descent?: number | string | (() => number) | (() => string);
-        diffuseConstant?: number | string | (() => number) | (() => string);
-        direction?: number | string | (() => number) | (() => string);
-        display?: number | string | (() => number) | (() => string);
-        divisor?: number | string | (() => number) | (() => string);
-        dominantBaseline?: number | string | (() => number) | (() => string);
-        dur?: number | string | (() => number) | (() => string);
-        dx?: number | string | (() => number) | (() => string);
-        dy?: number | string | (() => number) | (() => string);
-        edgeMode?: number | string | (() => number) | (() => string);
-        elevation?: number | string | (() => number) | (() => string);
-        enableBackground?: number | string | (() => number) | (() => string);
-        end?: number | string | (() => number) | (() => string);
-        exponent?: number | string | (() => number) | (() => string);
-        externalResourcesRequired?: number | string | (() => number) | (() => string);
+        decelerate?: number | string | (() => number | string);
+        descent?: number | string | (() => number | string);
+        diffuseConstant?: number | string | (() => number | string);
+        direction?: number | string | (() => number | string);
+        display?: number | string | (() => number | string);
+        divisor?: number | string | (() => number | string);
+        dominantBaseline?: number | string | (() => number | string);
+        dur?: number | string | (() => number | string);
+        dx?: number | string | (() => number | string);
+        dy?: number | string | (() => number | string);
+        edgeMode?: number | string | (() => number | string);
+        elevation?: number | string | (() => number | string);
+        enableBackground?: number | string | (() => number | string);
+        end?: number | string | (() => number | string);
+        exponent?: number | string | (() => number | string);
+        externalResourcesRequired?: number | string | (() => number | string);
         fill?: string | (() => string);
-        fillOpacity?: number | string | (() => number) | (() => string);
+        fillOpacity?: number | string | (() => number | string);
         fillRule?: "nonzero" | "evenodd" | "inherit";
         filter?: string | (() => string);
-        filterRes?: number | string | (() => number) | (() => string);
-        filterUnits?: number | string | (() => number) | (() => string);
-        floodColor?: number | string | (() => number) | (() => string);
-        floodOpacity?: number | string | (() => number) | (() => string);
-        focusable?: number | string | (() => number) | (() => string);
+        filterRes?: number | string | (() => number | string);
+        filterUnits?: number | string | (() => number | string);
+        floodColor?: number | string | (() => number | string);
+        floodOpacity?: number | string | (() => number | string);
+        focusable?: number | string | (() => number | string);
         fontFamily?: string | (() => string);
-        fontSize?: number | string | (() => number) | (() => string);
-        fontSizeAdjust?: number | string | (() => number) | (() => string);
-        fontStretch?: number | string | (() => number) | (() => string);
-        fontStyle?: number | string | (() => number) | (() => string);
-        fontVariant?: number | string | (() => number) | (() => string);
-        fontWeight?: number | string | (() => number) | (() => string);
-        format?: number | string | (() => number) | (() => string);
-        from?: number | string | (() => number) | (() => string);
-        fx?: number | string | (() => number) | (() => string);
-        fy?: number | string | (() => number) | (() => string);
-        g1?: number | string | (() => number) | (() => string);
-        g2?: number | string | (() => number) | (() => string);
-        glyphName?: number | string | (() => number) | (() => string);
-        glyphOrientationHorizontal?: number | string | (() => number) | (() => string);
-        glyphOrientationVertical?: number | string | (() => number) | (() => string);
-        glyphRef?: number | string | (() => number) | (() => string);
+        fontSize?: number | string | (() => number | string);
+        fontSizeAdjust?: number | string | (() => number | string);
+        fontStretch?: number | string | (() => number | string);
+        fontStyle?: number | string | (() => number | string);
+        fontVariant?: number | string | (() => number | string);
+        fontWeight?: number | string | (() => number | string);
+        format?: number | string | (() => number | string);
+        from?: number | string | (() => number | string);
+        fx?: number | string | (() => number | string);
+        fy?: number | string | (() => number | string);
+        g1?: number | string | (() => number | string);
+        g2?: number | string | (() => number | string);
+        glyphName?: number | string | (() => number | string);
+        glyphOrientationHorizontal?: number | string | (() => number | string);
+        glyphOrientationVertical?: number | string | (() => number | string);
+        glyphRef?: number | string | (() => number | string);
         gradientTransform?: string | (() => string);
         gradientUnits?: string | (() => string);
-        hanging?: number | string | (() => number) | (() => string);
-        horizAdvX?: number | string | (() => number) | (() => string);
-        horizOriginX?: number | string | (() => number) | (() => string);
+        hanging?: number | string | (() => number | string);
+        horizAdvX?: number | string | (() => number | string);
+        horizOriginX?: number | string | (() => number | string);
         href?: string | (() => string);
-        ideographic?: number | string | (() => number) | (() => string);
-        imageRendering?: number | string | (() => number) | (() => string);
-        in2?: number | string | (() => number) | (() => string);
+        ideographic?: number | string | (() => number | string);
+        imageRendering?: number | string | (() => number | string);
+        in2?: number | string | (() => number | string);
         in?: string | (() => string);
-        intercept?: number | string | (() => number) | (() => string);
-        k1?: number | string | (() => number) | (() => string);
-        k2?: number | string | (() => number) | (() => string);
-        k3?: number | string | (() => number) | (() => string);
-        k4?: number | string | (() => number) | (() => string);
-        k?: number | string | (() => number) | (() => string);
-        kernelMatrix?: number | string | (() => number) | (() => string);
-        kernelUnitLength?: number | string | (() => number) | (() => string);
-        kerning?: number | string | (() => number) | (() => string);
-        keyPoints?: number | string | (() => number) | (() => string);
-        keySplines?: number | string | (() => number) | (() => string);
-        keyTimes?: number | string | (() => number) | (() => string);
-        lengthAdjust?: number | string | (() => number) | (() => string);
-        letterSpacing?: number | string | (() => number) | (() => string);
-        lightingColor?: number | string | (() => number) | (() => string);
-        limitingConeAngle?: number | string | (() => number) | (() => string);
-        local?: number | string | (() => number) | (() => string);
+        intercept?: number | string | (() => number | string);
+        k1?: number | string | (() => number | string);
+        k2?: number | string | (() => number | string);
+        k3?: number | string | (() => number | string);
+        k4?: number | string | (() => number | string);
+        k?: number | string | (() => number | string);
+        kernelMatrix?: number | string | (() => number | string);
+        kernelUnitLength?: number | string | (() => number | string);
+        kerning?: number | string | (() => number | string);
+        keyPoints?: number | string | (() => number | string);
+        keySplines?: number | string | (() => number | string);
+        keyTimes?: number | string | (() => number | string);
+        lengthAdjust?: number | string | (() => number | string);
+        letterSpacing?: number | string | (() => number | string);
+        lightingColor?: number | string | (() => number | string);
+        limitingConeAngle?: number | string | (() => number | string);
+        local?: number | string | (() => number | string);
         markerEnd?: string | (() => string);
-        markerHeight?: number | string | (() => number) | (() => string);
+        markerHeight?: number | string | (() => number | string);
         markerMid?: string | (() => string);
         markerStart?: string | (() => string);
-        markerUnits?: number | string | (() => number) | (() => string);
-        markerWidth?: number | string | (() => number) | (() => string);
+        markerUnits?: number | string | (() => number | string);
+        markerWidth?: number | string | (() => number | string);
         mask?: string | (() => string);
-        maskContentUnits?: number | string | (() => number) | (() => string);
-        maskUnits?: number | string | (() => number) | (() => string);
-        mathematical?: number | string | (() => number) | (() => string);
-        mode?: number | string | (() => number) | (() => string);
-        numOctaves?: number | string | (() => number) | (() => string);
-        offset?: number | string | (() => number) | (() => string);
-        opacity?: number | string | (() => number) | (() => string);
-        operator?: number | string | (() => number) | (() => string);
-        order?: number | string | (() => number) | (() => string);
-        orient?: number | string | (() => number) | (() => string);
-        orientation?: number | string | (() => number) | (() => string);
-        origin?: number | string | (() => number) | (() => string);
-        overflow?: number | string | (() => number) | (() => string);
-        overlinePosition?: number | string | (() => number) | (() => string);
-        overlineThickness?: number | string | (() => number) | (() => string);
-        paintOrder?: number | string | (() => number) | (() => string);
-        panose1?: number | string | (() => number) | (() => string);
-        pathLength?: number | string | (() => number) | (() => string);
+        maskContentUnits?: number | string | (() => number | string);
+        maskUnits?: number | string | (() => number | string);
+        mathematical?: number | string | (() => number | string);
+        mode?: number | string | (() => number | string);
+        numOctaves?: number | string | (() => number | string);
+        offset?: number | string | (() => number | string);
+        opacity?: number | string | (() => number | string);
+        operator?: number | string | (() => number | string);
+        order?: number | string | (() => number | string);
+        orient?: number | string | (() => number | string);
+        orientation?: number | string | (() => number | string);
+        origin?: number | string | (() => number | string);
+        overflow?: number | string | (() => number | string);
+        overlinePosition?: number | string | (() => number | string);
+        overlineThickness?: number | string | (() => number | string);
+        paintOrder?: number | string | (() => number | string);
+        panose1?: number | string | (() => number | string);
+        pathLength?: number | string | (() => number | string);
         patternContentUnits?: string | (() => string);
-        patternTransform?: number | string | (() => number) | (() => string);
+        patternTransform?: number | string | (() => number | string);
         patternUnits?: string | (() => string);
-        pointerEvents?: number | string | (() => number) | (() => string);
+        pointerEvents?: number | string | (() => number | string);
         points?: string | (() => string);
-        pointsAtX?: number | string | (() => number) | (() => string);
-        pointsAtY?: number | string | (() => number) | (() => string);
-        pointsAtZ?: number | string | (() => number) | (() => string);
-        preserveAlpha?: number | string | (() => number) | (() => string);
+        pointsAtX?: number | string | (() => number | string);
+        pointsAtY?: number | string | (() => number | string);
+        pointsAtZ?: number | string | (() => number | string);
+        preserveAlpha?: number | string | (() => number | string);
         preserveAspectRatio?: string | (() => string);
-        primitiveUnits?: number | string | (() => number) | (() => string);
-        r?: number | string | (() => number) | (() => string);
-        radius?: number | string | (() => number) | (() => string);
-        refX?: number | string | (() => number) | (() => string);
-        refY?: number | string | (() => number) | (() => string);
-        renderingIntent?: number | string | (() => number) | (() => string);
-        repeatCount?: number | string | (() => number) | (() => string);
-        repeatDur?: number | string | (() => number) | (() => string);
-        requiredExtensions?: number | string | (() => number) | (() => string);
-        requiredFeatures?: number | string | (() => number) | (() => string);
-        restart?: number | string | (() => number) | (() => string);
+        primitiveUnits?: number | string | (() => number | string);
+        r?: number | string | (() => number | string);
+        radius?: number | string | (() => number | string);
+        refX?: number | string | (() => number | string);
+        refY?: number | string | (() => number | string);
+        renderingIntent?: number | string | (() => number | string);
+        repeatCount?: number | string | (() => number | string);
+        repeatDur?: number | string | (() => number | string);
+        requiredExtensions?: number | string | (() => number | string);
+        requiredFeatures?: number | string | (() => number | string);
+        restart?: number | string | (() => number | string);
         result?: string | (() => string);
-        rotate?: number | string | (() => number) | (() => string);
-        rx?: number | string | (() => number) | (() => string);
-        ry?: number | string | (() => number) | (() => string);
-        scale?: number | string | (() => number) | (() => string);
-        seed?: number | string | (() => number) | (() => string);
-        shapeRendering?: number | string | (() => number) | (() => string);
-        slope?: number | string | (() => number) | (() => string);
-        spacing?: number | string | (() => number) | (() => string);
-        specularConstant?: number | string | (() => number) | (() => string);
-        specularExponent?: number | string | (() => number) | (() => string);
-        speed?: number | string | (() => number) | (() => string);
+        rotate?: number | string | (() => number | string);
+        rx?: number | string | (() => number | string);
+        ry?: number | string | (() => number | string);
+        scale?: number | string | (() => number | string);
+        seed?: number | string | (() => number | string);
+        shapeRendering?: number | string | (() => number | string);
+        slope?: number | string | (() => number | string);
+        spacing?: number | string | (() => number | string);
+        specularConstant?: number | string | (() => number | string);
+        specularExponent?: number | string | (() => number | string);
+        speed?: number | string | (() => number | string);
         spreadMethod?: string | (() => string);
-        startOffset?: number | string | (() => number) | (() => string);
-        stdDeviation?: number | string | (() => number) | (() => string);
-        stemh?: number | string | (() => number) | (() => string);
-        stemv?: number | string | (() => number) | (() => string);
-        stitchTiles?: number | string | (() => number) | (() => string);
+        startOffset?: number | string | (() => number | string);
+        stdDeviation?: number | string | (() => number | string);
+        stemh?: number | string | (() => number | string);
+        stemv?: number | string | (() => number | string);
+        stitchTiles?: number | string | (() => number | string);
         stopColor?: string | (() => string);
-        stopOpacity?: number | string | (() => number) | (() => string);
-        strikethroughPosition?: number | string | (() => number) | (() => string);
-        strikethroughThickness?: number | string | (() => number) | (() => string);
-        string?: number | string | (() => number) | (() => string);
+        stopOpacity?: number | string | (() => number | string);
+        strikethroughPosition?: number | string | (() => number | string);
+        strikethroughThickness?: number | string | (() => number | string);
+        string?: number | string | (() => number | string);
         stroke?: string | (() => string);
         strokeDasharray?: string | number;
         strokeDashoffset?: string | number;
         strokeLinecap?: "butt" | "round" | "square" | "inherit";
         strokeLinejoin?: "miter" | "round" | "bevel" | "inherit";
-        strokeMiterlimit?: number | string | (() => number) | (() => string);
-        strokeOpacity?: number | string | (() => number) | (() => string);
-        strokeWidth?: number | string | (() => number) | (() => string);
-        surfaceScale?: number | string | (() => number) | (() => string);
-        systemLanguage?: number | string | (() => number) | (() => string);
-        tableValues?: number | string | (() => number) | (() => string);
-        targetX?: number | string | (() => number) | (() => string);
-        targetY?: number | string | (() => number) | (() => string);
+        strokeMiterlimit?: number | string | (() => number | string);
+        strokeOpacity?: number | string | (() => number | string);
+        strokeWidth?: number | string | (() => number | string);
+        surfaceScale?: number | string | (() => number | string);
+        systemLanguage?: number | string | (() => number | string);
+        tableValues?: number | string | (() => number | string);
+        targetX?: number | string | (() => number | string);
+        targetY?: number | string | (() => number | string);
         textAnchor?: string | (() => string);
-        textDecoration?: number | string | (() => number) | (() => string);
-        textLength?: number | string | (() => number) | (() => string);
-        textRendering?: number | string | (() => number) | (() => string);
-        to?: number | string | (() => number) | (() => string);
+        textDecoration?: number | string | (() => number | string);
+        textLength?: number | string | (() => number | string);
+        textRendering?: number | string | (() => number | string);
+        to?: number | string | (() => number | string);
         transform?: string | (() => string);
-        u1?: number | string | (() => number) | (() => string);
-        u2?: number | string | (() => number) | (() => string);
-        underlinePosition?: number | string | (() => number) | (() => string);
-        underlineThickness?: number | string | (() => number) | (() => string);
-        unicode?: number | string | (() => number) | (() => string);
-        unicodeBidi?: number | string | (() => number) | (() => string);
-        unicodeRange?: number | string | (() => number) | (() => string);
-        unitsPerEm?: number | string | (() => number) | (() => string);
-        vAlphabetic?: number | string | (() => number) | (() => string);
+        u1?: number | string | (() => number | string);
+        u2?: number | string | (() => number | string);
+        underlinePosition?: number | string | (() => number | string);
+        underlineThickness?: number | string | (() => number | string);
+        unicode?: number | string | (() => number | string);
+        unicodeBidi?: number | string | (() => number | string);
+        unicodeRange?: number | string | (() => number | string);
+        unitsPerEm?: number | string | (() => number | string);
+        vAlphabetic?: number | string | (() => number | string);
         values?: string | (() => string);
-        vectorEffect?: number | string | (() => number) | (() => string);
+        vectorEffect?: number | string | (() => number | string);
         version?: string | (() => string);
-        vertAdvY?: number | string | (() => number) | (() => string);
-        vertOriginX?: number | string | (() => number) | (() => string);
-        vertOriginY?: number | string | (() => number) | (() => string);
-        vHanging?: number | string | (() => number) | (() => string);
-        vIdeographic?: number | string | (() => number) | (() => string);
+        vertAdvY?: number | string | (() => number | string);
+        vertOriginX?: number | string | (() => number | string);
+        vertOriginY?: number | string | (() => number | string);
+        vHanging?: number | string | (() => number | string);
+        vIdeographic?: number | string | (() => number | string);
         viewBox?: string | (() => string);
-        viewTarget?: number | string | (() => number) | (() => string);
-        visibility?: number | string | (() => number) | (() => string);
-        vMathematical?: number | string | (() => number) | (() => string);
-        widths?: number | string | (() => number) | (() => string);
-        wordSpacing?: number | string | (() => number) | (() => string);
-        writingMode?: number | string | (() => number) | (() => string);
-        x1?: number | string | (() => number) | (() => string);
-        x2?: number | string | (() => number) | (() => string);
-        x?: number | string | (() => number) | (() => string);
+        viewTarget?: number | string | (() => number | string);
+        visibility?: number | string | (() => number | string);
+        vMathematical?: number | string | (() => number | string);
+        widths?: number | string | (() => number | string);
+        wordSpacing?: number | string | (() => number | string);
+        writingMode?: number | string | (() => number | string);
+        x1?: number | string | (() => number | string);
+        x2?: number | string | (() => number | string);
+        x?: number | string | (() => number | string);
         xChannelSelector?: string | (() => string);
-        xHeight?: number | string | (() => number) | (() => string);
+        xHeight?: number | string | (() => number | string);
         xlinkActuate?: string | (() => string);
         xlinkArcrole?: string | (() => string);
         xlinkHref?: string | (() => string);
@@ -1498,11 +1488,11 @@ declare namespace React {
         xmlns?: string | (() => string);
         xmlnsXlink?: string | (() => string);
         xmlSpace?: string | (() => string);
-        y1?: number | string | (() => number) | (() => string);
-        y2?: number | string | (() => number) | (() => string);
-        y?: number | string | (() => number) | (() => string);
+        y1?: number | string | (() => number | string);
+        y2?: number | string | (() => number | string);
+        y?: number | string | (() => number | string);
         yChannelSelector?: string | (() => string);
-        z?: number | string | (() => number) | (() => string);
+        z?: number | string | (() => number | string);
         zoomAndPan?: string | (() => string);
     }
 

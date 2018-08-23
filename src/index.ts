@@ -1,4 +1,4 @@
-import { A0, A1, Either, F0, F1, View } from "rahisi-type-utils";
+import { A0, A1, Either, F0, F1 } from "rahisi-type-utils";
 
 export const createRef = (
     () => {
@@ -10,8 +10,6 @@ export const createRef = (
 export const mounted = "mounted";
 
 export const unmounted = "unmounted";
-
-const customEvents = new Map<string, Array<F1<any, any>>>();
 
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
@@ -64,14 +62,15 @@ class Notifier {
 }
 
 export interface Attribute {
-    set(o: View | SVGElement, watch: Notifier, isSvg: boolean): void;
+    set(o: HTMLElement | SVGElement, watch: Notifier, isSvg: boolean): void;
 }
 
 export interface Renderable {
 
-    mount(parent: View | SVGElement | DocumentFragment): View | SVGElement | Text;
+    mount(parent: HTMLElement | SVGElement | DocumentFragment): HTMLElement | SVGElement | Text;
 
-    render(parent: View | SVGElement | DocumentFragment, watch: Notifier, isSvg: boolean): View | SVGElement | Text;
+    render(parent: HTMLElement | SVGElement | DocumentFragment, watch: Notifier, isSvg: boolean):
+        HTMLElement | SVGElement | Text;
 }
 
 interface KeyValuePair<K, V> {
@@ -179,7 +178,7 @@ export class BaseElement implements Renderable {
         private readonly children: Renderable[] = new Array<Renderable>()) { }
 
     // factor out
-    public mount(parent: View) {
+    public mount(parent: HTMLElement) {
 
         const notifier = new Notifier();
 
@@ -190,7 +189,7 @@ export class BaseElement implements Renderable {
         return v;
     }
 
-    public render(parent: View, watch: Notifier, isSvg: boolean) {
+    public render(parent: HTMLElement, watch: Notifier, isSvg: boolean) {
 
         const useSvg = isSvg || this.elementName === "svg";
 
@@ -239,7 +238,7 @@ export class ConditionalRenderElement implements Renderable {
         this.currentSource = source.find((a) => a.test()) || this.fallback;
     }
 
-    public mount(parent: View) {
+    public mount(parent: HTMLElement) {
 
         const notifier = new Notifier();
 
@@ -250,7 +249,7 @@ export class ConditionalRenderElement implements Renderable {
         return v;
     }
 
-    public render(parent: View, watch: Notifier, isSvg: boolean) {
+    public render(parent: HTMLElement, watch: Notifier, isSvg: boolean) {
 
         this.currentNode =
             this.currentSource
@@ -296,7 +295,7 @@ export class TemplateElement<T> implements Renderable {
         private readonly template: F1<T, Renderable>,
         private readonly placeholder: Renderable | null) { }
 
-    public mount(parent: View) {
+    public mount(parent: HTMLElement) {
 
         const notifier = new Notifier();
 
@@ -307,7 +306,7 @@ export class TemplateElement<T> implements Renderable {
         return v;
     }
 
-    public render(o: View, watch: Notifier, isSvg: boolean) {
+    public render(o: HTMLElement, watch: Notifier, isSvg: boolean) {
 
         const placeholderNode =
             this.placeholder ? this.placeholder.render(document.createDocumentFragment(), watch, isSvg) : null;
@@ -401,7 +400,7 @@ export class TextElement implements Renderable {
 
     constructor(private readonly textContent: Either<string>) { }
 
-    public mount(parent: View) {
+    public mount(parent: HTMLElement) {
 
         const notifier = new Notifier();
 
@@ -412,7 +411,7 @@ export class TextElement implements Renderable {
         return v;
     }
 
-    public render(parent: View, watch: Notifier, _: boolean) {
+    public render(parent: HTMLElement, watch: Notifier, _: boolean) {
 
         const o = document.createTextNode("");
 
@@ -505,7 +504,7 @@ export class NativeAttribute implements Attribute {
 
     public constructor(private readonly attribute: string, private readonly value: Either<string>) { }
 
-    public set(o: View, watch: Notifier, isSvg: boolean) {
+    public set(o: HTMLElement, watch: Notifier, isSvg: boolean) {
 
         if (typeof this.value !== "function") {
 
@@ -546,7 +545,7 @@ export class FocusA implements Attribute {
 
     public constructor(private readonly focus: Either<boolean>) { }
 
-    public set(o: View, watch: Notifier) {
+    public set(o: HTMLElement, watch: Notifier) {
 
         if (typeof this.focus !== "function") {
             this.currentValue = this.focus;
@@ -589,42 +588,11 @@ export class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribut
         private readonly eventName: K | "mounted" | "unmounted",
         private readonly handler: F1<HTMLElementEventMap[K], any>) { }
 
-    public set(o: View) {
+    public set(o: HTMLElement) {
 
         o.addEventListener(this.eventName, this.handler);
     }
 }
-
-export class OnCustomHandlerA implements Attribute {
-
-    public constructor(
-        private readonly customEventName: string,
-        private readonly handler: F1<any, any>) { }
-
-    public set(o: View) {
-
-        if (!customEvents.has(this.customEventName)) {
-            customEvents.set(this.customEventName, new Array<F1<any, any>>());
-        }
-
-        const handlers = customEvents.get(this.customEventName)!;
-
-        handlers.push(this.handler);
-
-        o.addEventListener(unmounted, () => handlers.splice(handlers.indexOf(this.handler), 1));
-    }
-}
-
-export const publish = (eventName: string, data: any) => {
-
-    const listeners = customEvents.get(eventName);
-
-    const _ = listeners && listeners.forEach((a) => a(data));
-};
-
-export const subscribe = (customEventName: string, handler: F1<any, any>) => {
-    new OnCustomHandlerA(customEventName, handler).set(document.body);
-};
 
 interface TemplateParams<T> {
     source: VersionedList<T> | (() => VersionedList<T>);

@@ -3,10 +3,9 @@ import { React } from "./factory";
 import { BaseElement, NativeAttribute, OnHandlerA } from "./index";
 import * as R from "./jsx";
 
-// add custom parameters checkChanged etc.
 export const CheckBox = (props: { onCheckChanged?: A1<boolean> } & R.InputHTMLAttributes<HTMLInputElement>) => {
     const { onCheckChanged, ...rest } = props;
-    const attributes = React.getAttributes(rest as any);
+    const attributes = React.getAttributes(rest);
     if (onCheckChanged) {
         attributes.push(
             new OnHandlerA("click",
@@ -18,7 +17,7 @@ export const CheckBox = (props: { onCheckChanged?: A1<boolean> } & R.InputHTMLAt
 
 export const TextBox = (props: { onTextChanged?: A1<string> } & R.InputHTMLAttributes<HTMLInputElement>) => {
     const { onTextChanged, ...rest } = props;
-    const attributes = React.getAttributes(rest as any);
+    const attributes = React.getAttributes(rest);
     if (onTextChanged) {
         const handler =
             (() => {
@@ -37,8 +36,6 @@ export const TextBox = (props: { onTextChanged?: A1<string> } & R.InputHTMLAttri
     attributes.push(new NativeAttribute("type", "text"));
     return new BaseElement("input", attributes) as any;
 };
-
-// export const textVal = (e: R.KeyboardEvent<HTMLInputElement>) => e.currentTarget.value;
 
 export const doScroll = (o: HTMLElement, element: HTMLElement, to?: number, duration?: number) => {
 

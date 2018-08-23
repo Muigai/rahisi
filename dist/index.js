@@ -6,7 +6,6 @@ exports.createRef = (() => {
 })();
 exports.mounted = "mounted";
 exports.unmounted = "unmounted";
-const customEvents = new Map();
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.type === "childList") {
@@ -365,28 +364,6 @@ class OnHandlerA {
     }
 }
 exports.OnHandlerA = OnHandlerA;
-class OnCustomHandlerA {
-    constructor(customEventName, handler) {
-        this.customEventName = customEventName;
-        this.handler = handler;
-    }
-    set(o) {
-        if (!customEvents.has(this.customEventName)) {
-            customEvents.set(this.customEventName, new Array());
-        }
-        const handlers = customEvents.get(this.customEventName);
-        handlers.push(this.handler);
-        o.addEventListener(exports.unmounted, () => handlers.splice(handlers.indexOf(this.handler), 1));
-    }
-}
-exports.OnCustomHandlerA = OnCustomHandlerA;
-exports.publish = (eventName, data) => {
-    const listeners = customEvents.get(eventName);
-    const _ = listeners && listeners.forEach((a) => a(data));
-};
-exports.subscribe = (customEventName, handler) => {
-    new OnCustomHandlerA(customEventName, handler).set(document.body);
-};
 exports.Template = (props) => {
     const { source, template, placeholder } = props;
     return new TemplateElement(source, template, placeholder || null); // no props

@@ -4,12 +4,13 @@ import {
     ConditionalRenderElement,
     FocusA,
     NativeAttribute,
-    OnCustomHandlerA,
     OnHandlerA,
     Renderable,
     TemplateElement,
     TextElement,
 } from "./index";
+
+import { AllHTMLAttributes } from "./jsx";
 
 import {
     Either,
@@ -20,14 +21,14 @@ import {
 type K = keyof HTMLElementEventMap;
 
 interface AttributeValue {
-    [name: string]: Either<string> | Either<boolean> | F1<HTMLElementEventMap[K], any>;
+    [name: string]: Either<string> | Either<boolean> | F1<HTMLElementEventMap[K], any> | undefined;
 }
 
 export class React {
 
     public static createElement = (
         tagName: string | F2<Attribute[], Renderable[], Renderable>,
-        attributes: AttributeValue | null, ...children: any[]): Renderable => {
+        attributes: AllHTMLAttributes<Element> | null, ...children: any[]): Renderable => {
 
         if (typeof tagName === "function") {
             return tagName(attributes as any, children);
@@ -40,7 +41,7 @@ export class React {
         return new BaseElement(tagName, attribs, kids);
     }
 
-    public static getAttributes = (attributes: AttributeValue | null) => {
+    public static getAttributes = <T = Element>(attributes: AllHTMLAttributes<T> | null) => {
 
         const attribs = new Array<Attribute>();
 
@@ -49,7 +50,7 @@ export class React {
 
                 const key = k.toLowerCase().replace("doubleclick", "dblclick");
 
-                const attributeValue = attributes[k];
+                const attributeValue = (attributes as any)[k];
 
                 if (key.startsWith("on")) {
                     const event = key.substring(2) as K;
