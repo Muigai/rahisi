@@ -9,8 +9,8 @@ exports.unmounted = "unmounted";
 const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.type === "childList") {
-            mutation.addedNodes.forEach((n) => n.dispatchEvent(new Event(exports.mounted)));
-            mutation.removedNodes.forEach((n) => n.dispatchEvent(new Event(exports.unmounted)));
+            mutation.addedNodes.forEach((n) => n.dispatchEvent(new CustomEvent(exports.mounted, { detail: { node: n } })));
+            mutation.removedNodes.forEach((n) => n.dispatchEvent(new CustomEvent(exports.unmounted, { detail: { node: n } })));
         }
     });
 });
@@ -100,18 +100,18 @@ class VersionedList {
     }
 }
 exports.VersionedList = VersionedList;
+function doMount(parent, child) {
+    const notifier = new Notifier();
+    const v = child.render(parent, notifier, false);
+    notifier.start();
+    return v;
+}
 class BaseElement {
     constructor(elementName, attributes = new Array(), children = new Array()) {
         this.elementName = elementName;
         this.attributes = attributes;
         this.children = children;
-    }
-    // factor out
-    mount(parent) {
-        const notifier = new Notifier();
-        const v = this.render(parent, notifier, false);
-        notifier.start();
-        return v;
+        this.mount = (parent) => doMount(parent, this);
     }
     render(parent, watch, isSvg) {
         const useSvg = isSvg || this.elementName === "svg";
@@ -135,14 +135,9 @@ class ConditionalRenderElement {
         this.source = source;
         this.def = def;
         this.currentNode = document.createTextNode("");
+        this.mount = (parent) => doMount(parent, this);
         this.fallback = { test: () => true, renderable: def };
         this.currentSource = source.find((a) => a.test()) || this.fallback;
-    }
-    mount(parent) {
-        const notifier = new Notifier();
-        const v = this.render(parent, notifier, false);
-        notifier.start();
-        return v;
     }
     render(parent, watch, isSvg) {
         this.currentNode =
@@ -236,12 +231,7 @@ class TextElement {
     constructor(textContent) {
         this.textContent = textContent;
         this.currentValue = "";
-    }
-    mount(parent) {
-        const notifier = new Notifier();
-        const v = this.render(parent, notifier, false);
-        notifier.start();
-        return v;
+        this.mount = (parent) => doMount(parent, this);
     }
     render(parent, watch, _) {
         const o = document.createTextNode("");
@@ -358,6 +348,9 @@ class OnHandlerA {
     constructor(eventName, handler) {
         this.eventName = eventName;
         this.handler = handler;
+    }
+    static make(eventName, handler) {
+        return new OnHandlerA(eventName, handler);
     }
     set(o) {
         o.addEventListener(this.eventName, this.handler);

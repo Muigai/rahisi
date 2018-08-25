@@ -10,7 +10,7 @@ import {
     TextElement,
 } from "./index";
 
-import { AllHTMLAttributes } from "./jsx";
+import { AllHTMLAttributes, RealEventMap } from "./jsx";
 
 import {
     Either,
@@ -18,11 +18,7 @@ import {
     F2,
 } from "rahisi-type-utils";
 
-type K = keyof HTMLElementEventMap;
-
-interface AttributeValue {
-    [name: string]: Either<string> | Either<boolean> | F1<HTMLElementEventMap[K], any> | undefined;
-}
+type K = keyof RealEventMap<Element>;
 
 export class React {
 
@@ -54,7 +50,7 @@ export class React {
 
                 if (key.startsWith("on")) {
                     const event = key.substring(2) as K;
-                    attribs.push(new OnHandlerA(event, attributeValue as F1<HTMLElementEventMap[K], any>));
+                    attribs.push(new OnHandlerA(event, attributeValue as F1<RealEventMap<Element>[K], void>));
                     continue;
                 }
 

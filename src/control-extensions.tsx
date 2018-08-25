@@ -7,12 +7,10 @@ export const CheckBox = (props: { onCheckChanged?: A1<boolean> } & R.InputHTMLAt
     const { onCheckChanged, ...rest } = props;
     const attributes = React.getAttributes(rest);
     if (onCheckChanged) {
-        attributes.push(
-            new OnHandlerA("click",
-                (e) => onCheckChanged((e.currentTarget as HTMLInputElement).checked)));
+        attributes.push(OnHandlerA.make<HTMLInputElement>("click", (e) => onCheckChanged(e.currentTarget.checked)));
     }
     attributes.push(new NativeAttribute("type", "checkbox"));
-    return new BaseElement("input", attributes) as any;
+    return new BaseElement("input", attributes);
 };
 
 export const TextBox = (props: { onTextChanged?: A1<string> } & R.InputHTMLAttributes<HTMLInputElement>) => {
@@ -22,19 +20,19 @@ export const TextBox = (props: { onTextChanged?: A1<string> } & R.InputHTMLAttri
         const handler =
             (() => {
                 let val = "";
-                const onKeyUp = (e: R.KeyboardEvent<HTMLInputElement>) => {
+                const onInput = (e: R.FormEvent<HTMLInputElement>) => {
                     if (e.currentTarget.value === val) {
                         return;
                     }
                     val = e.currentTarget.value;
                     onTextChanged(val);
                 };
-                return onKeyUp;
+                return onInput;
             })();
-        attributes.push(new OnHandlerA("input", handler as any));
+        attributes.push(OnHandlerA.make<HTMLInputElement>("input", handler));
     }
     attributes.push(new NativeAttribute("type", "text"));
-    return new BaseElement("input", attributes) as any;
+    return new BaseElement("input", attributes);
 };
 
 export const doScroll = (o: HTMLElement, element: HTMLElement, to?: number, duration?: number) => {

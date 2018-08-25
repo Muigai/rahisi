@@ -15,7 +15,7 @@ exports.CheckBox = (props) => {
     const { onCheckChanged } = props, rest = __rest(props, ["onCheckChanged"]);
     const attributes = factory_1.React.getAttributes(rest);
     if (onCheckChanged) {
-        attributes.push(new index_1.OnHandlerA("click", (e) => onCheckChanged(e.currentTarget.checked)));
+        attributes.push(index_1.OnHandlerA.make("click", (e) => onCheckChanged(e.currentTarget.checked)));
     }
     attributes.push(new index_1.NativeAttribute("type", "checkbox"));
     return new index_1.BaseElement("input", attributes);
@@ -26,16 +26,16 @@ exports.TextBox = (props) => {
     if (onTextChanged) {
         const handler = (() => {
             let val = "";
-            const onKeyUp = (e) => {
+            const onInput = (e) => {
                 if (e.currentTarget.value === val) {
                     return;
                 }
                 val = e.currentTarget.value;
                 onTextChanged(val);
             };
-            return onKeyUp;
+            return onInput;
         })();
-        attributes.push(new index_1.OnHandlerA("input", handler));
+        attributes.push(index_1.OnHandlerA.make("input", handler));
     }
     attributes.push(new index_1.NativeAttribute("type", "text"));
     return new index_1.BaseElement("input", attributes);

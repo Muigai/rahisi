@@ -1,5 +1,11 @@
 import { A0, A1, Either, F0, F1 } from "rahisi-type-utils";
+import { RealEventMap } from "./jsx";
 export declare const createRef: () => string;
+export interface LifecycleEvent<T = Element> {
+    detail: {
+        node: T;
+    };
+}
 export declare const mounted = "mounted";
 export declare const unmounted = "unmounted";
 declare class Notifier {
@@ -42,7 +48,7 @@ export declare class BaseElement implements Renderable {
     private readonly attributes;
     private readonly children;
     constructor(elementName: string | undefined, attributes?: Attribute[], children?: Renderable[]);
-    mount(parent: HTMLElement): HTMLElement | SVGElement;
+    mount: (parent: HTMLElement) => HTMLElement | Text | SVGElement;
     render(parent: HTMLElement, watch: Notifier, isSvg: boolean): HTMLElement | SVGElement;
 }
 export interface ConditionalElement {
@@ -56,7 +62,7 @@ export declare class ConditionalRenderElement implements Renderable {
     private currentNode;
     private fallback;
     constructor(source: ConditionalElement[], def: F0<Renderable>);
-    mount(parent: HTMLElement): HTMLElement | Text | SVGElement;
+    mount: (parent: HTMLElement) => HTMLElement | Text | SVGElement;
     render(parent: HTMLElement, watch: Notifier, isSvg: boolean): HTMLElement | Text | SVGElement;
 }
 export declare class TemplateElement<T> implements Renderable {
@@ -73,7 +79,7 @@ export declare class TextElement implements Renderable {
     private readonly textContent;
     private currentValue;
     constructor(textContent: Either<string>);
-    mount(parent: HTMLElement): Text;
+    mount: (parent: HTMLElement) => HTMLElement | Text | SVGElement;
     render(parent: HTMLElement, watch: Notifier, _: boolean): Text;
 }
 export declare class NativeAttribute implements Attribute {
@@ -90,10 +96,12 @@ export declare class FocusA implements Attribute {
     constructor(focus: Either<boolean>);
     set(o: HTMLElement, watch: Notifier): void;
 }
-export declare class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribute {
+declare type E<T> = keyof RealEventMap<T> | "mounted" | "unmounted";
+export declare class OnHandlerA<K extends keyof RealEventMap<T>, T = Element> implements Attribute {
     private readonly eventName;
     private readonly handler;
-    constructor(eventName: K | "mounted" | "unmounted", handler: F1<HTMLElementEventMap[K], any>);
+    static make<T, K extends keyof RealEventMap<T> = "click">(eventName: E<T>, handler: F1<RealEventMap<T>[K], void>): OnHandlerA<K, T>;
+    constructor(eventName: E<T>, handler: F1<RealEventMap<T>[K], void>);
     set(o: HTMLElement): void;
 }
 interface TemplateParams<T> {
@@ -101,5 +109,5 @@ interface TemplateParams<T> {
     template: ((t: T) => Renderable);
     placeholder?: Renderable;
 }
-export declare const Template: <T>(props: TemplateParams<T>) => any;
+export declare const Template: <T>(props: TemplateParams<T>) => TemplateElement<T>;
 export {};

@@ -1,26 +1,4 @@
-// Type defs modified from React as below
-// Type definitions for React 16.4
-// Project: http://facebook.github.io/react/
-// Definitions by: Asana <https://asana.com>
-//                 AssureSign <http://www.assuresign.com>
-//                 Microsoft <https://microsoft.com>
-//                 John Reilly <https://github.com/johnnyreilly>
-//                 Benoit Benezech <https://github.com/bbenezech>
-//                 Patricio Zavolinsky <https://github.com/pzavolinsky>
-//                 Digiguru <https://github.com/digiguru>
-//                 Eric Anderson <https://github.com/ericanderson>
-//                 Albert Kurniawan <https://github.com/morcerf>
-//                 Tanguy Krotoff <https://github.com/tkrotoff>
-//                 Dovydas Navickas <https://github.com/DovydasNavickas>
-//                 Stéphane Goetz <https://github.com/onigoetz>
-//                 Josh Rutherford <https://github.com/theruther4d>
-//                 Guilherme Hübner <https://github.com/guilhermehubner>
-//                 Ferdy Budhidharma <https://github.com/ferdaber>
-//                 Johann Rakotoharisoa <https://github.com/jrakotoharisoa>
-//                 Olivier Pascal <https://github.com/pascaloliv>
-//                 Martin Hochel <https://github.com/hotell>
-// Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
-// TypeScript Version: 2.6
+// Type defs modified from https://github.com/DefinitelyTyped/DefinitelyTyped as below
 
 import * as CSS from 'csstype';
 
@@ -38,7 +16,7 @@ declare namespace React {
     interface ClassAttributes<T> { }
 
     interface ReactElement<P> {
-        props: P;
+        // props: P;
         mount(parent: HTMLElement |
             SVGElement |
             DocumentFragment): HTMLElement | SVGElement | Text;
@@ -262,197 +240,385 @@ declare namespace React {
     interface SVGProps<T> extends SVGAttributes<T>, ClassAttributes<T> {
     }
 
+    interface RealEventMap<T>{
+
+        // Clipboard Events
+        "copy": ClipboardEvent<T>;
+
+        "cut": ClipboardEvent<T>;
+
+        "paste": ClipboardEvent<T>;
+
+
+        // Composition Events
+        "compositionend": CompositionEvent<T>;
+
+        "compositionstart": CompositionEvent<T>;
+
+        "compositionupdate": CompositionEvent<T>;
+
+
+        // Focus Events
+        "focus": FocusEvent<T>;
+
+        "blur": FocusEvent<T>;
+
+
+        // Form Events
+        "change": FormEvent<T>;
+
+        "input": FormEvent<T>;
+
+        "reset": FormEvent<T>;
+
+        "submit": FormEvent<T>;
+
+        "invalid": FormEvent<T>;
+
+
+        // Image Events
+        "load": RealEvent<T>;
+
+        "error": RealEvent<T>; // also a Media Event
+
+
+        // Keyboard Events
+        "keydown": KeyboardEvent<T>;
+
+        "keypress": KeyboardEvent<T>;
+
+        "keyup": KeyboardEvent<T>;
+
+
+        // Media Events
+        "abort": RealEvent<T>;
+
+        "canplay": RealEvent<T>;
+
+        "canplaythrough": RealEvent<T>;
+
+        "durationchange": RealEvent<T>;
+
+        "emptied": RealEvent<T>;
+
+        "encrypted": RealEvent<T>;
+
+        "ended": RealEvent<T>;
+
+        "loadedData": RealEvent<T>;
+
+        "loadedmetadata": RealEvent<T>;
+
+        "loadstart": RealEvent<T>;
+
+        "pause": RealEvent<T>;
+
+        "play": RealEvent<T>;
+
+        "playing": RealEvent<T>;
+
+        "progress": RealEvent<T>;
+
+        "ratechange": RealEvent<T>;
+
+        "seeked": RealEvent<T>;
+
+        "seeking": RealEvent<T>;
+
+        "stalled": RealEvent<T>;
+
+        "suspend": RealEvent<T>;
+
+        "timeupdate": RealEvent<T>;
+
+        "volumechange": RealEvent<T>;
+
+        "waiting": RealEvent<T>;
+
+
+        // MouseEvents
+        "click": MouseEvent<T>;
+
+        "contextmenu": MouseEvent<T>;
+
+        "doubleclick": MouseEvent<T>;
+
+        "drag": DragEvent<T>;
+
+        "dragend": DragEvent<T>;
+
+        "dragenter": DragEvent<T>;
+
+        "dragexit": DragEvent<T>;
+
+        "dragleave": DragEvent<T>;
+
+        "dragover": DragEvent<T>;
+
+        "dragstart": DragEvent<T>;
+
+        "drop": DragEvent<T>;
+
+        "mousedown": MouseEvent<T>;
+
+        "mouseenter": MouseEvent<T>;
+        "mouseleave": MouseEvent<T>;
+        "mousemove": MouseEvent<T>;
+
+        "mouseout": MouseEvent<T>;
+
+        "mouseover": MouseEvent<T>;
+
+        "mouseup": MouseEvent<T>;
+
+
+        // Selection Events
+        "select": RealEvent<T>;
+
+
+        // Touch Events
+        "touchcancel": TouchEvent<T>;
+
+        "touchend": TouchEvent<T>;
+
+        "touchmove": TouchEvent<T>;
+
+        "touchstart": TouchEvent<T>;
+
+
+        // Pointer Events
+        "pointerdown": PointerEvent<T>;
+
+        "pointermove": PointerEvent<T>;
+
+        "pointerup": PointerEvent<T>;
+
+        "pointercancel": PointerEvent<T>;
+
+        "pointerenter": PointerEvent<T>;
+
+        "pointerleave": PointerEvent<T>;
+
+        "pointerover": PointerEvent<T>;
+
+        "pointerout": PointerEvent<T>;
+
+
+
+
+
+
+        // UI Events
+        "scroll": UIEvent<T>;
+
+
+        // Wheel Events
+        "wheel": WheelEvent<T>;
+
+
+        // Animation Events
+        "animationstart": AnimationEvent<T>;
+
+        "animationend": AnimationEvent<T>;
+
+        "animationiteration": AnimationEvent<T>;
+
+
+        // Transition Events
+        "transitionend": TransitionEvent<T>;
+    }
+
     interface DOMAttributes<T> {
-        children?: ReactNode;
+        // children?: ReactNode; 
         // dangerouslySetInnerHTML?: {
         //     __html: string | (() => string);
         // };
 
         // Clipboard Events
         onCopy?: ClipboardEventHandler<T>;
-        onCopyCapture?: ClipboardEventHandler<T>;
+
         onCut?: ClipboardEventHandler<T>;
-        onCutCapture?: ClipboardEventHandler<T>;
+
         onPaste?: ClipboardEventHandler<T>;
-        onPasteCapture?: ClipboardEventHandler<T>;
+
 
         // Composition Events
         onCompositionEnd?: CompositionEventHandler<T>;
-        onCompositionEndCapture?: CompositionEventHandler<T>;
+
         onCompositionStart?: CompositionEventHandler<T>;
-        onCompositionStartCapture?: CompositionEventHandler<T>;
+
         onCompositionUpdate?: CompositionEventHandler<T>;
-        onCompositionUpdateCapture?: CompositionEventHandler<T>;
+
 
         // Focus Events
         onFocus?: FocusEventHandler<T>;
-        onFocusCapture?: FocusEventHandler<T>;
+
         onBlur?: FocusEventHandler<T>;
-        onBlurCapture?: FocusEventHandler<T>;
+
 
         // Form Events
         onChange?: FormEventHandler<T>;
-        onChangeCapture?: FormEventHandler<T>;
+
         onInput?: FormEventHandler<T>;
-        onInputCapture?: FormEventHandler<T>;
+
         onReset?: FormEventHandler<T>;
-        onResetCapture?: FormEventHandler<T>;
+
         onSubmit?: FormEventHandler<T>;
-        onSubmitCapture?: FormEventHandler<T>;
+
         onInvalid?: FormEventHandler<T>;
-        onInvalidCapture?: FormEventHandler<T>;
+
 
         // Image Events
         onLoad?: ReactEventHandler<T>;
-        onLoadCapture?: ReactEventHandler<T>;
+
         onError?: ReactEventHandler<T>; // also a Media Event
-        onErrorCapture?: ReactEventHandler<T>; // also a Media Event
+
 
         // Keyboard Events
         onKeyDown?: KeyboardEventHandler<T>;
-        onKeyDownCapture?: KeyboardEventHandler<T>;
+
         onKeyPress?: KeyboardEventHandler<T>;
-        onKeyPressCapture?: KeyboardEventHandler<T>;
+
         onKeyUp?: KeyboardEventHandler<T>;
-        onKeyUpCapture?: KeyboardEventHandler<T>;
+
 
         // Media Events
         onAbort?: ReactEventHandler<T>;
-        onAbortCapture?: ReactEventHandler<T>;
+
         onCanPlay?: ReactEventHandler<T>;
-        onCanPlayCapture?: ReactEventHandler<T>;
+
         onCanPlayThrough?: ReactEventHandler<T>;
-        onCanPlayThroughCapture?: ReactEventHandler<T>;
+
         onDurationChange?: ReactEventHandler<T>;
-        onDurationChangeCapture?: ReactEventHandler<T>;
+
         onEmptied?: ReactEventHandler<T>;
-        onEmptiedCapture?: ReactEventHandler<T>;
+
         onEncrypted?: ReactEventHandler<T>;
-        onEncryptedCapture?: ReactEventHandler<T>;
+
         onEnded?: ReactEventHandler<T>;
-        onEndedCapture?: ReactEventHandler<T>;
+
         onLoadedData?: ReactEventHandler<T>;
-        onLoadedDataCapture?: ReactEventHandler<T>;
+
         onLoadedMetadata?: ReactEventHandler<T>;
-        onLoadedMetadataCapture?: ReactEventHandler<T>;
+
         onLoadStart?: ReactEventHandler<T>;
-        onLoadStartCapture?: ReactEventHandler<T>;
+
         onPause?: ReactEventHandler<T>;
-        onPauseCapture?: ReactEventHandler<T>;
+
         onPlay?: ReactEventHandler<T>;
-        onPlayCapture?: ReactEventHandler<T>;
+
         onPlaying?: ReactEventHandler<T>;
-        onPlayingCapture?: ReactEventHandler<T>;
+
         onProgress?: ReactEventHandler<T>;
-        onProgressCapture?: ReactEventHandler<T>;
+
         onRateChange?: ReactEventHandler<T>;
-        onRateChangeCapture?: ReactEventHandler<T>;
+
         onSeeked?: ReactEventHandler<T>;
-        onSeekedCapture?: ReactEventHandler<T>;
+
         onSeeking?: ReactEventHandler<T>;
-        onSeekingCapture?: ReactEventHandler<T>;
+
         onStalled?: ReactEventHandler<T>;
-        onStalledCapture?: ReactEventHandler<T>;
+
         onSuspend?: ReactEventHandler<T>;
-        onSuspendCapture?: ReactEventHandler<T>;
+
         onTimeUpdate?: ReactEventHandler<T>;
-        onTimeUpdateCapture?: ReactEventHandler<T>;
+
         onVolumeChange?: ReactEventHandler<T>;
-        onVolumeChangeCapture?: ReactEventHandler<T>;
+
         onWaiting?: ReactEventHandler<T>;
-        onWaitingCapture?: ReactEventHandler<T>;
+
 
         // MouseEvents
         onClick?: MouseEventHandler<T>;
-        onClickCapture?: MouseEventHandler<T>;
+
         onContextMenu?: MouseEventHandler<T>;
-        onContextMenuCapture?: MouseEventHandler<T>;
+
         onDoubleClick?: MouseEventHandler<T>;
-        onDoubleClickCapture?: MouseEventHandler<T>;
+
         onDrag?: DragEventHandler<T>;
-        onDragCapture?: DragEventHandler<T>;
+
         onDragEnd?: DragEventHandler<T>;
-        onDragEndCapture?: DragEventHandler<T>;
+
         onDragEnter?: DragEventHandler<T>;
-        onDragEnterCapture?: DragEventHandler<T>;
+
         onDragExit?: DragEventHandler<T>;
-        onDragExitCapture?: DragEventHandler<T>;
+
         onDragLeave?: DragEventHandler<T>;
-        onDragLeaveCapture?: DragEventHandler<T>;
+
         onDragOver?: DragEventHandler<T>;
-        onDragOverCapture?: DragEventHandler<T>;
+
         onDragStart?: DragEventHandler<T>;
-        onDragStartCapture?: DragEventHandler<T>;
+
         onDrop?: DragEventHandler<T>;
-        onDropCapture?: DragEventHandler<T>;
+
         onMouseDown?: MouseEventHandler<T>;
-        onMouseDownCapture?: MouseEventHandler<T>;
+
         onMouseEnter?: MouseEventHandler<T>;
         onMouseLeave?: MouseEventHandler<T>;
         onMouseMove?: MouseEventHandler<T>;
-        onMouseMoveCapture?: MouseEventHandler<T>;
+
         onMouseOut?: MouseEventHandler<T>;
-        onMouseOutCapture?: MouseEventHandler<T>;
+
         onMouseOver?: MouseEventHandler<T>;
-        onMouseOverCapture?: MouseEventHandler<T>;
+
         onMouseUp?: MouseEventHandler<T>;
-        onMouseUpCapture?: MouseEventHandler<T>;
+
 
         // Selection Events
         onSelect?: ReactEventHandler<T>;
-        onSelectCapture?: ReactEventHandler<T>;
+
 
         // Touch Events
         onTouchCancel?: TouchEventHandler<T>;
-        onTouchCancelCapture?: TouchEventHandler<T>;
+
         onTouchEnd?: TouchEventHandler<T>;
-        onTouchEndCapture?: TouchEventHandler<T>;
+
         onTouchMove?: TouchEventHandler<T>;
-        onTouchMoveCapture?: TouchEventHandler<T>;
+
         onTouchStart?: TouchEventHandler<T>;
-        onTouchStartCapture?: TouchEventHandler<T>;
+
 
         // Pointer Events
         onPointerDown?: PointerEventHandler<T>;
-        onPointerDownCapture?: PointerEventHandler<T>;
+
         onPointerMove?: PointerEventHandler<T>;
-        onPointerMoveCapture?: PointerEventHandler<T>;
+
         onPointerUp?: PointerEventHandler<T>;
-        onPointerUpCapture?: PointerEventHandler<T>;
+
         onPointerCancel?: PointerEventHandler<T>;
-        onPointerCancelCapture?: PointerEventHandler<T>;
+
         onPointerEnter?: PointerEventHandler<T>;
-        onPointerEnterCapture?: PointerEventHandler<T>;
+
         onPointerLeave?: PointerEventHandler<T>;
-        onPointerLeaveCapture?: PointerEventHandler<T>;
+
         onPointerOver?: PointerEventHandler<T>;
-        onPointerOverCapture?: PointerEventHandler<T>;
+
         onPointerOut?: PointerEventHandler<T>;
-        onPointerOutCapture?: PointerEventHandler<T>;
-        onGotPointerCapture?: PointerEventHandler<T>;
-        onGotPointerCaptureCapture?: PointerEventHandler<T>;
-        onLostPointerCapture?: PointerEventHandler<T>;
-        onLostPointerCaptureCapture?: PointerEventHandler<T>;
+
+
+
+
+
 
         // UI Events
         onScroll?: UIEventHandler<T>;
-        onScrollCapture?: UIEventHandler<T>;
+
 
         // Wheel Events
         onWheel?: WheelEventHandler<T>;
-        onWheelCapture?: WheelEventHandler<T>;
+
 
         // Animation Events
         onAnimationStart?: AnimationEventHandler<T>;
-        onAnimationStartCapture?: AnimationEventHandler<T>;
+
         onAnimationEnd?: AnimationEventHandler<T>;
-        onAnimationEndCapture?: AnimationEventHandler<T>;
+
         onAnimationIteration?: AnimationEventHandler<T>;
-        onAnimationIterationCapture?: AnimationEventHandler<T>;
+
 
         // Transition Events
         onTransitionEnd?: TransitionEventHandler<T>;
-        onTransitionEndCapture?: TransitionEventHandler<T>;
+
     }
 
     export interface CSSProperties extends CSS.Properties<string | number> {
@@ -469,8 +635,8 @@ declare namespace React {
     interface HTMLAttributes<T> extends DOMAttributes<T> {
         
         // extension
-        onMounted?: ((this: HTMLElement, ev: RealEvent<T>) => any);
-        onUnmounted?: ((this: HTMLElement, ev: RealEvent<T>) => any);
+        onMounted?: ((this: HTMLElement, ev: RealEvent<T>) => void);
+        onUnmounted?: ((this: HTMLElement, ev: RealEvent<T>) => void);
         focus?: boolean | (() => boolean);
 
         // Standard HTML Attributes
@@ -944,6 +1110,7 @@ declare namespace React {
     interface ImgHTMLAttributes<T> extends HTMLAttributes<T> {
         alt?: string | (() => string);
         crossOrigin?: "anonymous" | "use-credentials" | "";
+        decoding?: "async" | "auto" | "sync";
         height?: number | string | (() => number | string);
         sizes?: string | (() => string);
         src?: string | (() => string);
@@ -1222,8 +1389,8 @@ declare namespace React {
     //   - union of string literals
     interface SVGAttributes<T> extends DOMAttributes<T> {
         // extension
-        onMounted?: ((this: SVGElement, ev: RealEvent<T>) => any);
-        onUnmounted?: ((this: SVGElement, ev: RealEvent<T>) => any);
+        onMounted?: ((this: SVGElement, ev: RealEvent<T>) => void);
+        onUnmounted?: ((this: SVGElement, ev: RealEvent<T>) => void);
         focus?: boolean | (() => boolean);
 
         // Attributes which also defined in HTMLAttributes

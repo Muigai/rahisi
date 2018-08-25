@@ -1,4 +1,5 @@
 import { A0, A1, Either, F0, F1 } from "rahisi-type-utils";
+import { RealEventMap } from "./jsx";
 
 export const createRef = (
     () => {
@@ -6,6 +7,8 @@ export const createRef = (
         return () => `id_${id++}`;
     }
 )();
+
+export interface LifecycleEvent<T = Element> { detail: { node: T }; }
 
 export const mounted = "mounted";
 
@@ -15,9 +18,9 @@ const observer = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.type === "childList") {
 
-            mutation.addedNodes.forEach((n) => n.dispatchEvent(new Event(mounted)));
+            mutation.addedNodes.forEach((n) => n.dispatchEvent(new CustomEvent(mounted, { detail: { node: n } })));
 
-            mutation.removedNodes.forEach((n) => n.dispatchEvent(new Event(unmounted)));
+            mutation.removedNodes.forEach((n) => n.dispatchEvent(new CustomEvent(unmounted, { detail: { node: n } })));
         }
     });
 });
@@ -170,6 +173,17 @@ export class VersionedList<T> {
     private removeListener: A1<Array<KeyValuePair<number, T>>> = () => { };
 }
 
+function doMount(parent: HTMLElement, child: Renderable) {
+
+    const notifier = new Notifier();
+
+    const v = child.render(parent, notifier, false);
+
+    notifier.start();
+
+    return v;
+}
+
 export class BaseElement implements Renderable {
 
     constructor(
@@ -177,17 +191,7 @@ export class BaseElement implements Renderable {
         private readonly attributes: Attribute[] = new Array<Attribute>(),
         private readonly children: Renderable[] = new Array<Renderable>()) { }
 
-    // factor out
-    public mount(parent: HTMLElement) {
-
-        const notifier = new Notifier();
-
-        const v = this.render(parent, notifier, false);
-
-        notifier.start();
-
-        return v;
-    }
+    public mount = (parent: HTMLElement): HTMLElement | SVGElement | Text => doMount(parent, this);
 
     public render(parent: HTMLElement, watch: Notifier, isSvg: boolean) {
 
@@ -238,16 +242,7 @@ export class ConditionalRenderElement implements Renderable {
         this.currentSource = source.find((a) => a.test()) || this.fallback;
     }
 
-    public mount(parent: HTMLElement) {
-
-        const notifier = new Notifier();
-
-        const v = this.render(parent, notifier, false);
-
-        notifier.start();
-
-        return v;
-    }
+    public mount = (parent: HTMLElement): HTMLElement | SVGElement | Text => doMount(parent, this);
 
     public render(parent: HTMLElement, watch: Notifier, isSvg: boolean) {
 
@@ -400,16 +395,7 @@ export class TextElement implements Renderable {
 
     constructor(private readonly textContent: Either<string>) { }
 
-    public mount(parent: HTMLElement) {
-
-        const notifier = new Notifier();
-
-        const v = this.render(parent, notifier, false);
-
-        notifier.start();
-
-        return v;
-    }
+    public mount = (parent: HTMLElement): HTMLElement | SVGElement | Text => doMount(parent, this);
 
     public render(parent: HTMLElement, watch: Notifier, _: boolean) {
 
@@ -582,15 +568,25 @@ export class FocusA implements Attribute {
     }
 }
 
-export class OnHandlerA<K extends keyof HTMLElementEventMap> implements Attribute {
+type E<T> = keyof RealEventMap<T> | "mounted" | "unmounted";
+
+export class OnHandlerA<K extends keyof RealEventMap<T>, T = Element> implements Attribute {
+
+    public static make<T,
+        /* hack to only specify one type <T> parameter, */
+        K extends keyof RealEventMap<T> = "click">(
+            eventName: E<T>,
+            handler: F1<RealEventMap<T>[K], void>) {
+        return new OnHandlerA(eventName, handler);
+    }
 
     public constructor(
-        private readonly eventName: K | "mounted" | "unmounted",
-        private readonly handler: F1<HTMLElementEventMap[K], any>) { }
+        private readonly eventName: E<T>,
+        private readonly handler: F1<RealEventMap<T>[K], void>) { }
 
     public set(o: HTMLElement) {
 
-        o.addEventListener(this.eventName, this.handler);
+        o.addEventListener(this.eventName, this.handler as any);
     }
 }
 
@@ -605,5 +601,5 @@ export const Template =
 
         const { source, template, placeholder } = props;
 
-        return new TemplateElement(source, template, placeholder || null) as any; // no props
+        return new TemplateElement(source, template, placeholder || null); // no props
     };
