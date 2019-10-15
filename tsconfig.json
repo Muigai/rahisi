@@ -15,7 +15,8 @@
         "noUnusedParameters": true,
         /* Source Map Options */
         "sourceMap": true,
-        "declaration": true
+        "declaration": true,
+        "composite": true,
     },
     "files": [
         "src/forTyping.ts"
