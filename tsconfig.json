@@ -5,7 +5,7 @@
         "jsx": "react",
         /* Basic Options */
         "module": "commonjs",
-        "target": "es2015",
+        "target": "es2016",
         "outDir": "./dist",
         "removeComments": false,
         /* Type-Checking Options */
