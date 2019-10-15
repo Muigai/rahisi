@@ -17,8 +17,11 @@
         "sourceMap": true,
         "declaration": true,
         "composite": true,
+        "references": [
+            { "path": "../rahisi-type-utils" }
+        ],
     },
-    "files": [
+   "files": [
         "src/forTyping.ts"
-    ]
+    ],
 }
