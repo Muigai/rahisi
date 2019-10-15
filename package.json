@@ -16,7 +16,7 @@
   "author": "Muigai Mwaura",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^3.0.1"
+    "typescript": "^3.6.3"
   },
   "dependencies": {
     "csstype": "^2.5.6",
