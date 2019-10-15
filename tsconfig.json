@@ -21,7 +21,5 @@
             { "path": "../rahisi-type-utils" }
         ],
     },
-   "files": [
-        "src/forTyping.ts"
-    ],
+    "include": ["src/*.tsx","src/*.ts"], 
 }
